@@ -11,10 +11,11 @@ class GameTest {
 
     private Player player1 = new Player("player1");
     private Player player2 = new Player("player2");
-    private Game game = new Game(player1);
+    private Game game;
 
     @BeforeEach
     void setUp() {
+        game = new Game(player1);
         game.join(player2);
         game.start();
     }
@@ -69,12 +70,6 @@ class GameTest {
 
     @Test
     void givenNewGame_whenPlayerOPlays_thenError() {
-        Player player1 = new Player("player1");
-        Player player2 = new Player("player2");
-        Game game = new Game(player1);
-        game.join(player2);
-        game.start();
-
         Player playerO = game.getPlayerO();
         Assertions.assertThatThrownBy(() -> game.play(playerO, 0, 1)).isInstanceOf(WrongPlayerException.class);
     }
