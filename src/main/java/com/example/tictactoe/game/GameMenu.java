@@ -11,7 +11,9 @@ public class GameMenu {
         return games;
     }
 
-    public void createNewGame(Player player) {
-        games.add(new Game(player));
+    public Game createNewGame(Player player) {
+        Game game = new Game(player);
+        games.add(game);
+        return game;
     }
 }
