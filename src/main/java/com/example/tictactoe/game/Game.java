@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import static com.example.tictactoe.game.TILE.*;
+import static com.example.tictactoe.game.MARK.*;
 
 public class Game {
     private Player creator;
@@ -13,6 +13,7 @@ public class Game {
     private Player playerO;
     private Grid grid;
     private Player currentPlayer;
+    private MARK currentmark;
 
     public Game(Player player) {
         creator = player;
@@ -23,27 +24,27 @@ public class Game {
     }
 
     public void join(Player otherPlayer) {
-        if(this.otherPlayer != null){
+        if (this.otherPlayer != null) {
             throw new GameJoinException(String.format("a tictactoe game can only contain 2 players. A third one tried to join: %s", otherPlayer));
-        } else if(otherPlayer.equals(this.creator)){
-            throw new GameJoinException(String.format("the creator of the game cannot join its own game. Player: %s",otherPlayer));
+        } else if (otherPlayer.equals(this.creator)) {
+            throw new GameJoinException(String.format("the creator of the game cannot join its own game. Player: %s", otherPlayer));
         }
         this.otherPlayer = otherPlayer;
     }
 
     public List<Player> listPlayers() {
         ArrayList<Player> players = new ArrayList<>();
-        if(creator != null){
+        if (creator != null) {
             players.add(creator);
         }
-        if(otherPlayer != null){
+        if (otherPlayer != null) {
             players.add(otherPlayer);
         }
         return players;
     }
 
     public void start() {
-        if(new Random().nextDouble() <0.5){
+        if (new Random().nextDouble() < 0.5) {
             playerX = creator;
             playerO = otherPlayer;
         } else {
@@ -52,13 +53,26 @@ public class Game {
         }
         grid = Grid.newEmptyGrid();
         currentPlayer = playerX;
+        currentmark = X;
     }
 
     public void play(Player player, int xCoord, int yCoord) {
-        if(player != currentPlayer){
-            throw new WrongPlayerException(String.format("player %s is not allowed to play now",player));
+        if (player != currentPlayer) {
+            throw new WrongPlayerException(String.format("player %s is not allowed to play now", player));
         }
-        grid.mark(xCoord,yCoord, X);
+        grid.mark(xCoord, yCoord, currentmark);
+        switchCurrentPlayer();
+    }
+
+    private void switchCurrentPlayer() {
+        if (currentPlayer == playerX) {
+            currentPlayer = playerO;
+            currentmark = O;
+        }
+        else {
+            currentPlayer = playerX;
+            currentmark = X;
+        }
     }
 
     public Player getPlayerX() {

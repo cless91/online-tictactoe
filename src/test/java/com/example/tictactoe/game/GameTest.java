@@ -4,8 +4,8 @@ import org.assertj.core.api.Assertions;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.Test;
 
-import static com.example.tictactoe.game.TILE.*;
-import static com.example.tictactoe.game.TILE.EMPTY;
+import static com.example.tictactoe.game.MARK.*;
+import static com.example.tictactoe.game.MARK.NONE;
 
 class GameTest {
     @Test
@@ -28,10 +28,10 @@ class GameTest {
 
     @Test
     void givenNewGame_whenStart_thenTheGridIsInitialized() {
-        Grid expectedGrid = Grid.newGrid(new TILE[]{
-                EMPTY, EMPTY, EMPTY,
-                EMPTY, EMPTY, EMPTY,
-                EMPTY, EMPTY, EMPTY
+        Grid expectedGrid = Grid.newGrid(new MARK[]{
+                NONE, NONE, NONE,
+                NONE, NONE, NONE,
+                NONE, NONE, NONE
         });
 
         Player player1 = new Player("player1");
@@ -45,10 +45,10 @@ class GameTest {
 
     @Test
     void givenNewGame_onlyPlayerXCanStart() {
-        Grid expectedGrid = Grid.newGrid(new TILE[]{
-                EMPTY, X, EMPTY,
-                EMPTY, EMPTY, EMPTY,
-                EMPTY, EMPTY, EMPTY
+        Grid expectedGrid = Grid.newGrid(new MARK[]{
+                NONE, X, NONE,
+                NONE, NONE, NONE,
+                NONE, NONE, NONE
         });
 
         Player player1 = new Player("player1");
@@ -72,5 +72,26 @@ class GameTest {
 
         Player playerO = game.getPlayerO();
         Assertions.assertThatThrownBy(() -> game.play(playerO, 0, 1)).isInstanceOf(WrongPlayerException.class);
+    }
+
+    @Test
+    void givenNewGame_whenPlayerXThenPlayer0_thenOK() {
+        Grid expectedGrid = Grid.newGrid(new MARK[]{
+                NONE, X, O,
+                NONE, NONE, NONE,
+                NONE, NONE, NONE
+        });
+
+        Player player1 = new Player("player1");
+        Player player2 = new Player("player2");
+        Game game = new Game(player1);
+        game.join(player2);
+        game.start();
+
+        Player playerX = game.getPlayerX();
+        Player playerO = game.getPlayerO();
+        game.play(playerX, 0, 1);
+        game.play(playerO, 0, 2);
+        Assertions.assertThat(game.getGrid()).usingRecursiveComparison().isEqualTo(expectedGrid);
     }
 }
