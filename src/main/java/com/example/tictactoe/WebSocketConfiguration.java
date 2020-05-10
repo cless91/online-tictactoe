@@ -1,4 +1,4 @@
-package com.example.websocketdemo;
+package com.example.tictactoe;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

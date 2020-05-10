@@ -1,4 +1,4 @@
-package com.example.websocketdemo;
+package com.example.tictactoe;
 
 import org.springframework.web.socket.BinaryMessage;
 import org.springframework.web.socket.CloseStatus;
