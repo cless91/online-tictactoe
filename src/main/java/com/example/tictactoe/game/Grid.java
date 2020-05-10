@@ -47,4 +47,9 @@ public class Grid {
         }
         marks[coord] = tile;
     }
+
+    public MARK markAt(int xCoord, int yCoord) {
+        int coord = xCoord * 3 + yCoord;
+        return marks[coord];
+    }
 }

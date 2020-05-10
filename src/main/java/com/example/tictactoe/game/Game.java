@@ -1,8 +1,7 @@
 package com.example.tictactoe.game;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
+import java.util.stream.IntStream;
 
 import static com.example.tictactoe.game.GAME_STATE.*;
 import static com.example.tictactoe.game.GAME_STATE.CREATED;
@@ -17,6 +16,7 @@ public class Game {
     private Player currentPlayer;
     private MARK currentmark;
     private GAME_STATE gameState;
+    private Set<GAME_STATE> gameOverStates = new HashSet<>(Arrays.asList(X_WINS,O_WINS, DRAW));
 
     public Game(Player player) {
         creator = player;
@@ -63,11 +63,45 @@ public class Game {
     }
 
     public void play(Player player, int xCoord, int yCoord) {
+        if(gameOverStates.contains(gameState)){
+            throw new GameOverException(String.format("player %s tried to play but the game is over.",player));
+        }
         if (player != currentPlayer) {
             throw new WrongPlayerException(String.format("player %s is not allowed to play now", player));
         }
         grid.mark(xCoord, yCoord, currentmark);
+        checkGameEndState();
         switchCurrentPlayer();
+    }
+
+    private void checkGameEndState() {
+        for (int i = 0; i < 3; i++) {
+            MARK mark_row = grid.markAt(i,0);
+            boolean wins_row = !mark_row.equals(NONE);
+            MARK mark_column = grid.markAt(0,i);
+            boolean wins_column = !mark_column.equals(NONE);
+            for (int j = 0; j < 3; j++) {
+                wins_row = wins_row && mark_row.equals(grid.markAt(i,j));
+                wins_column = wins_column && mark_column.equals(grid.markAt(j,i));
+            }
+
+            if(wins_row){
+                if(mark_row.equals(X)){
+                    gameState = X_WINS;
+                }else{
+                    gameState = O_WINS;
+                }
+            }else if(wins_column){
+                if(mark_column.equals(X)){
+                    gameState = X_WINS;
+                }else{
+                    gameState = O_WINS;
+                }
+            }
+        }
+//        if(IntStream.range(0,3).allMatch(i -> grid.markAt(i,1).equals(X))){
+//            gameState = X_WINS;
+//        }
     }
 
     private void switchCurrentPlayer() {
@@ -90,5 +124,9 @@ public class Game {
 
     public Grid getGrid() {
         return grid;
+    }
+
+    public GAME_STATE getGameState() {
+        return gameState;
     }
 }

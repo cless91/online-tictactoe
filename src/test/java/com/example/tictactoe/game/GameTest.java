@@ -5,7 +5,11 @@ import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static com.example.tictactoe.game.GAME_STATE.O_WINS;
+import static com.example.tictactoe.game.GAME_STATE.X_WINS;
 import static com.example.tictactoe.game.MARK.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class GameTest {
 
@@ -40,7 +44,7 @@ class GameTest {
                 NONE, NONE, NONE,
                 NONE, NONE, NONE
         });
-        Assertions.assertThat(game.getGrid()).usingRecursiveComparison().isEqualTo(expectedGrid);
+        assertThat(game.getGrid()).usingRecursiveComparison().isEqualTo(expectedGrid);
     }
 
     @Test
@@ -52,13 +56,13 @@ class GameTest {
         });
 
         game.play(playerX, 0, 1);
-        Assertions.assertThat(game.getGrid()).usingRecursiveComparison().isEqualTo(expectedGrid);
+        assertThat(game.getGrid()).usingRecursiveComparison().isEqualTo(expectedGrid);
     }
 
     @Test
     void givenNewGame_whenPlayerOPlays_thenError() {
         Player playerO = game.getPlayerO();
-        Assertions.assertThatThrownBy(() -> game.play(playerO, 0, 1)).isInstanceOf(WrongPlayerException.class);
+        assertThatThrownBy(() -> game.play(playerO, 0, 1)).isInstanceOf(WrongPlayerException.class);
     }
 
     @Test
@@ -70,14 +74,62 @@ class GameTest {
         });
         game.play(playerX, 0, 1);
         game.play(playerO, 0, 2);
-        Assertions.assertThat(game.getGrid()).usingRecursiveComparison().isEqualTo(expectedGrid);
+        assertThat(game.getGrid()).usingRecursiveComparison().isEqualTo(expectedGrid);
     }
 
     @Test
     void cannotPlayTwiceInSameTile() {
         game.play(playerX, 0, 1);
-        Assertions.assertThatThrownBy(() -> game.play(playerO, 0, 1)).isInstanceOf(WrongPlacementException.class);
+        assertThatThrownBy(() -> game.play(playerO, 0, 1)).isInstanceOf(WrongPlacementException.class);
     }
 
+    @Test
+    void xWins_andNobodyElseCanPlayAfter() {
+        game.play(playerX, 0, 1);
+        game.play(playerO, 0, 2);
+        game.play(playerX, 1, 1);
+        game.play(playerO, 1, 2);
+        game.play(playerX, 2, 1);
 
+        //       |     |
+        //    -  |  X  |  O
+        //  _____|_____|_____
+        //       |     |
+        //    -  |  X  |  O
+        //  _____|_____|_____
+        //       |     |
+        //    -  |  X  |  -
+        //       |     |
+
+        SoftAssertions.assertSoftly(softAssertions -> {
+            softAssertions.assertThat(game.getGameState()).isEqualTo(X_WINS);
+            softAssertions.assertThatThrownBy(() -> game.play(playerO, 0, 0)).isInstanceOf(GameOverException.class);
+            softAssertions.assertThatThrownBy(() -> game.play(playerX, 0, 0)).isInstanceOf(GameOverException.class);
+        });
+    }
+
+    @Test
+    void oWins_andNobodyElseCanPlayAfter() {
+        game.play(playerX, 0, 1);
+        game.play(playerO, 0, 2);
+        game.play(playerX, 1, 1);
+        game.play(playerO, 1, 2);
+        game.play(playerX, 1, 0);
+
+        //       |     |
+        //    -  |  X  |  O
+        //  _____|_____|_____
+        //       |     |
+        //    X  |  X  |  O
+        //  _____|_____|_____
+        //       |     |
+        //    -  |  -  |  O
+        //       |     |
+
+        SoftAssertions.assertSoftly(softAssertions -> {
+            softAssertions.assertThat(game.getGameState()).isEqualTo(O_WINS);
+            softAssertions.assertThatThrownBy(() -> game.play(playerO, 0, 0)).isInstanceOf(GameOverException.class);
+            softAssertions.assertThatThrownBy(() -> game.play(playerX, 0, 0)).isInstanceOf(GameOverException.class);
+        });
+    }
 }
