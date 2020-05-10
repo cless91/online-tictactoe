@@ -115,6 +115,7 @@ class GameTest {
         game.play(playerX, 1, 1);
         game.play(playerO, 1, 2);
         game.play(playerX, 1, 0);
+        game.play(playerO, 2, 2);
 
         //       |     |
         //    -  |  X  |  O

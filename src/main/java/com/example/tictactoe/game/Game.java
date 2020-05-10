@@ -85,23 +85,12 @@ public class Game {
                 wins_column = wins_column && mark_column.equals(grid.markAt(j,i));
             }
 
-            if(wins_row){
-                if(mark_row.equals(X)){
-                    gameState = X_WINS;
-                }else{
-                    gameState = O_WINS;
-                }
-            }else if(wins_column){
-                if(mark_column.equals(X)){
-                    gameState = X_WINS;
-                }else{
-                    gameState = O_WINS;
-                }
+            if((mark_row.equals(X) || mark_column.equals(X)) && (wins_row || wins_column)){
+                gameState = X_WINS;
+            } else if((mark_row.equals(O) || mark_column.equals(O)) && (wins_row || wins_column)){
+                gameState = O_WINS;
             }
         }
-//        if(IntStream.range(0,3).allMatch(i -> grid.markAt(i,1).equals(X))){
-//            gameState = X_WINS;
-//        }
     }
 
     private void switchCurrentPlayer() {
