@@ -12,19 +12,20 @@ class GameTest {
     private Player player1 = new Player("player1");
     private Player player2 = new Player("player2");
     private Game game;
+    private Player playerX;
+    private Player playerO;
 
     @BeforeEach
     void setUp() {
         game = new Game(player1);
         game.join(player2);
         game.start();
+        playerX = game.getPlayerX();
+        playerO = game.getPlayerO();
     }
 
     @Test
     void givenGameWithTwoPlayersHavingJoined_whenStartTheGame_thenPlayersCrossAndCirclesAreAssigned_andTheGridIsInitialized() {
-        Player playerX = game.getPlayerX();
-        Player playerO = game.getPlayerO();
-
         SoftAssertions.assertSoftly(softAssertions -> {
             softAssertions.assertThat(playerX).isIn(player1, player2);
             softAssertions.assertThat(playerO).isIn(player1, player2);
@@ -39,13 +40,6 @@ class GameTest {
                 NONE, NONE, NONE,
                 NONE, NONE, NONE
         });
-
-        Player player1 = new Player("player1");
-        Player player2 = new Player("player2");
-        Game game = new Game(player1);
-        game.join(player2);
-        game.start();
-
         Assertions.assertThat(game.getGrid()).usingRecursiveComparison().isEqualTo(expectedGrid);
     }
 
@@ -57,13 +51,6 @@ class GameTest {
                 NONE, NONE, NONE
         });
 
-        Player player1 = new Player("player1");
-        Player player2 = new Player("player2");
-        Game game = new Game(player1);
-        game.join(player2);
-        game.start();
-
-        Player playerX = game.getPlayerX();
         game.play(playerX, 0, 1);
         Assertions.assertThat(game.getGrid()).usingRecursiveComparison().isEqualTo(expectedGrid);
     }
@@ -81,15 +68,6 @@ class GameTest {
                 NONE, NONE, NONE,
                 NONE, NONE, NONE
         });
-
-        Player player1 = new Player("player1");
-        Player player2 = new Player("player2");
-        Game game = new Game(player1);
-        game.join(player2);
-        game.start();
-
-        Player playerX = game.getPlayerX();
-        Player playerO = game.getPlayerO();
         game.play(playerX, 0, 1);
         game.play(playerO, 0, 2);
         Assertions.assertThat(game.getGrid()).usingRecursiveComparison().isEqualTo(expectedGrid);
@@ -97,14 +75,6 @@ class GameTest {
 
     @Test
     void cannotPlayTwiceInSameTile() {
-        Player player1 = new Player("player1");
-        Player player2 = new Player("player2");
-        Game game = new Game(player1);
-        game.join(player2);
-        game.start();
-
-        Player playerX = game.getPlayerX();
-        Player playerO = game.getPlayerO();
         game.play(playerX, 0, 1);
         Assertions.assertThatThrownBy(() -> game.play(playerO, 0, 1)).isInstanceOf(WrongPlacementException.class);
     }
