@@ -2,10 +2,14 @@ package com.example.tictactoe.game;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class Game {
     private Player creator;
     private Player otherPlayer;
+    private Player playerX;
+    private Player playerO;
+    private Grid grid;
 
     public Game(Player player) {
         creator = player;
@@ -33,5 +37,28 @@ public class Game {
             players.add(otherPlayer);
         }
         return players;
+    }
+
+    public void start() {
+        if(new Random().nextDouble() <0.5){
+            playerX = creator;
+            playerO = otherPlayer;
+        } else {
+            playerO = creator;
+            playerX = otherPlayer;
+        }
+        grid = Grid.newEmptyGrid();
+    }
+
+    public Player getPlayerX() {
+        return playerX;
+    }
+
+    public Player getPlayerO() {
+        return playerO;
+    }
+
+    public Grid getGrid() {
+        return grid;
     }
 }
