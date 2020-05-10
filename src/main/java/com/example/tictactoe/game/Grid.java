@@ -41,6 +41,10 @@ public class Grid {
     }
 
     public void mark(int xCoord, int yCoord, MARK tile) {
-        marks[xCoord*3+yCoord] = tile;
+        int coord = xCoord * 3 + yCoord;
+        if(!NONE.equals(marks[coord])){
+            throw new WrongPlacementException(String.format("(%d,%d) id not allowed. There is already a tile there: %s",xCoord,yCoord,tile));
+        }
+        marks[coord] = tile;
     }
 }

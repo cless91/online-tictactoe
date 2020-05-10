@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import static com.example.tictactoe.game.GAME_STATE.*;
+import static com.example.tictactoe.game.GAME_STATE.CREATED;
 import static com.example.tictactoe.game.MARK.*;
 
 public class Game {
@@ -14,9 +16,11 @@ public class Game {
     private Grid grid;
     private Player currentPlayer;
     private MARK currentmark;
+    private GAME_STATE gameState;
 
     public Game(Player player) {
         creator = player;
+        gameState = CREATED;
     }
 
     public Player getCreator() {
@@ -30,6 +34,7 @@ public class Game {
             throw new GameJoinException(String.format("the creator of the game cannot join its own game. Player: %s", otherPlayer));
         }
         this.otherPlayer = otherPlayer;
+        this.gameState = STARTING;
     }
 
     public List<Player> listPlayers() {
@@ -44,6 +49,7 @@ public class Game {
     }
 
     public void start() {
+        gameState = ONGOING;
         if (new Random().nextDouble() < 0.5) {
             playerX = creator;
             playerO = otherPlayer;
@@ -68,8 +74,7 @@ public class Game {
         if (currentPlayer == playerX) {
             currentPlayer = playerO;
             currentmark = O;
-        }
-        else {
+        } else {
             currentPlayer = playerX;
             currentmark = X;
         }
