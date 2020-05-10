@@ -4,12 +4,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import static com.example.tictactoe.game.TILE.*;
+
 public class Game {
     private Player creator;
     private Player otherPlayer;
     private Player playerX;
     private Player playerO;
     private Grid grid;
+    private Player currentPlayer;
 
     public Game(Player player) {
         creator = player;
@@ -48,6 +51,14 @@ public class Game {
             playerX = otherPlayer;
         }
         grid = Grid.newEmptyGrid();
+        currentPlayer = playerX;
+    }
+
+    public void play(Player player, int xCoord, int yCoord) {
+        if(player != currentPlayer){
+            throw new WrongPlayerException(String.format("player %s is not allowed to play now",player));
+        }
+        grid.mark(xCoord,yCoord, X);
     }
 
     public Player getPlayerX() {

@@ -39,4 +39,8 @@ public class Grid {
     public int hashCode() {
         return Arrays.hashCode(tiles);
     }
+
+    public void mark(int xCoord, int yCoord, TILE tile) {
+        tiles[xCoord*3+yCoord] = tile;
+    }
 }
