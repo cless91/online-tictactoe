@@ -84,7 +84,7 @@ class GameTest {
     }
 
     @Test
-    void xWins_andNobodyElseCanPlayAfter() {
+    void xWinsVertical_andNobodyElseCanPlayAfter() {
         game.play(playerX, 0, 1);
         game.play(playerO, 0, 2);
         game.play(playerX, 1, 1);
@@ -109,7 +109,7 @@ class GameTest {
     }
 
     @Test
-    void oWins_andNobodyElseCanPlayAfter() {
+    void oWinsVertical_andNobodyElseCanPlayAfter() {
         game.play(playerX, 0, 1);
         game.play(playerO, 0, 2);
         game.play(playerX, 1, 1);
@@ -129,6 +129,56 @@ class GameTest {
 
         SoftAssertions.assertSoftly(softAssertions -> {
             softAssertions.assertThat(game.getGameState()).isEqualTo(O_WINS);
+            softAssertions.assertThatThrownBy(() -> game.play(playerO, 0, 0)).isInstanceOf(GameOverException.class);
+            softAssertions.assertThatThrownBy(() -> game.play(playerX, 0, 0)).isInstanceOf(GameOverException.class);
+        });
+    }
+
+    @Test
+    void xWinsDiagonalTopLeft_andNobodyElseCanPlayAfter() {
+        game.play(playerX, 0, 0);
+        game.play(playerO, 0, 1);
+        game.play(playerX, 1, 1);
+        game.play(playerO, 1, 2);
+        game.play(playerX, 2, 2);
+
+        //       |     |
+        //    X  |  O  |  -
+        //  _____|_____|_____
+        //       |     |
+        //    -  |  X  |  O
+        //  _____|_____|_____
+        //       |     |
+        //    -  |  -  |  X
+        //       |     |
+
+        SoftAssertions.assertSoftly(softAssertions -> {
+            softAssertions.assertThat(game.getGameState()).isEqualTo(X_WINS);
+            softAssertions.assertThatThrownBy(() -> game.play(playerO, 0, 0)).isInstanceOf(GameOverException.class);
+            softAssertions.assertThatThrownBy(() -> game.play(playerX, 0, 0)).isInstanceOf(GameOverException.class);
+        });
+    }
+
+    @Test
+    void xWinsDiagonalTopRight_andNobodyElseCanPlayAfter() {
+        game.play(playerX, 0, 2);
+        game.play(playerO, 0, 1);
+        game.play(playerX, 1, 1);
+        game.play(playerO, 1, 2);
+        game.play(playerX, 2, 0);
+
+        //       |     |
+        //    -  |  O  |  X
+        //  _____|_____|_____
+        //       |     |
+        //    -  |  X  |  O
+        //  _____|_____|_____
+        //       |     |
+        //    X  |  -  |  -
+        //       |     |
+
+        SoftAssertions.assertSoftly(softAssertions -> {
+            softAssertions.assertThat(game.getGameState()).isEqualTo(X_WINS);
             softAssertions.assertThatThrownBy(() -> game.play(playerO, 0, 0)).isInstanceOf(GameOverException.class);
             softAssertions.assertThatThrownBy(() -> game.play(playerX, 0, 0)).isInstanceOf(GameOverException.class);
         });
