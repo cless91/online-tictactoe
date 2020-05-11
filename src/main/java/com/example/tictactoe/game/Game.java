@@ -104,6 +104,8 @@ public class Game {
         }
         if ((markDiagonalTopLeft.equals(X) && winsDiagonalTopLeft) || (markDiagonalTopRight.equals(X) && winsDiagonalTopRight)) {
             gameState = X_WINS;
+        } else if ((markDiagonalTopLeft.equals(O) && winsDiagonalTopLeft) || (markDiagonalTopRight.equals(O) && winsDiagonalTopRight)) {
+            gameState = O_WINS;
         }
     }
 

@@ -183,4 +183,56 @@ class GameTest {
             softAssertions.assertThatThrownBy(() -> game.play(playerX, 0, 0)).isInstanceOf(GameOverException.class);
         });
     }
+
+    @Test
+    void oWinsDiagonalTopLeft_andNobodyElseCanPlayAfter() {
+        game.play(playerX, 0, 1);
+        game.play(playerO, 0, 0);
+        game.play(playerX, 0, 2);
+        game.play(playerO, 1, 1);
+        game.play(playerX, 1, 2);
+        game.play(playerO, 2, 2);
+
+        //       |     |
+        //    O  |  X  |  X
+        //  _____|_____|_____
+        //       |     |
+        //    -  |  O  |  X
+        //  _____|_____|_____
+        //       |     |
+        //    -  |  -  |  O
+        //       |     |
+
+        SoftAssertions.assertSoftly(softAssertions -> {
+            softAssertions.assertThat(game.getGameState()).isEqualTo(O_WINS);
+            softAssertions.assertThatThrownBy(() -> game.play(playerO, 0, 0)).isInstanceOf(GameOverException.class);
+            softAssertions.assertThatThrownBy(() -> game.play(playerX, 0, 0)).isInstanceOf(GameOverException.class);
+        });
+    }
+
+    @Test
+    void oWinsDiagonalTopRight_andNobodyElseCanPlayAfter() {
+        game.play(playerX, 0, 1);
+        game.play(playerO, 0, 2);
+        game.play(playerX, 0, 0);
+        game.play(playerO, 1, 1);
+        game.play(playerX, 1, 0);
+        game.play(playerO, 2, 0);
+
+        //       |     |
+        //    X  |  X  |  -
+        //  _____|_____|_____
+        //       |     |
+        //    X  |  O  |  -
+        //  _____|_____|_____
+        //       |     |
+        //    O  |  -  |  -
+        //       |     |
+
+        SoftAssertions.assertSoftly(softAssertions -> {
+            softAssertions.assertThat(game.getGameState()).isEqualTo(O_WINS);
+            softAssertions.assertThatThrownBy(() -> game.play(playerO, 0, 0)).isInstanceOf(GameOverException.class);
+            softAssertions.assertThatThrownBy(() -> game.play(playerX, 0, 0)).isInstanceOf(GameOverException.class);
+        });
+    }
 }
