@@ -1,5 +1,7 @@
 <html>
 <head>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+          integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
     <style>
         #messages {
             text-align: left;
@@ -12,6 +14,14 @@
 </head>
 <body>
 <div class="container">
+    <h1>TIC TAC TOE</h1>
+    <div>
+        <button type="button" class="btn btn-primary">Create</button>
+    </div>
+    <br/>
+
+    <ul id="currentGames" class="list-group"></ul>
+
     <div id="messages" class="messages"></div>
     <div class="input-fields">
         <p>Type a message and hit send:</p>
@@ -26,6 +36,7 @@
 </div>
 </body>
 <script>
+    const currentGames = document.getElementById("currentGames");
     const messageWindow = document.getElementById("messages");
 
     const sendButton = document.getElementById("send");
@@ -42,12 +53,10 @@
     };
 
     socket.onmessage = function (event) {
-        if (event.data instanceof ArrayBuffer) {
-            addMessageToWindow('Got Image:');
-            addImageToWindow(event.data);
-        } else {
-            addMessageToWindow(`${event.data}`);
-        }
+        var currentGames = JSON.parse(event.data);
+        currentGames.forEach(function(game) {
+            addToCurrentGames(game);
+        });
     };
 
     sendButton.onclick = function (event) {
@@ -70,9 +79,23 @@
         messageWindow.innerHTML += `<div>${message}</div>`
     }
 
+    function addToCurrentGames(game) {
+        // currentGames.innerHTML += `<li class="list-group-item">${game.title}<button style="float: right" type="button" class="btn btn-primary btn-sm">join</button></li>`
+        currentGames.innerHTML += `<li class="list-group-item">${game.title} ${game.isJoinable ? '<button style="float: right" type="button" class="btn btn-primary btn-sm">join</button>' : ''}</li>`
+    }
+
     function addImageToWindow(image) {
         let url = URL.createObjectURL(new Blob([image]));
         messageWindow.innerHTML += `<img src="${url}"/>`
     }
 </script>
+<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
+        integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
+        crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+        integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+        crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
+        integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
+        crossorigin="anonymous"></script>
 </html>

@@ -3,7 +3,7 @@ package com.example.tictactoe.game;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GameMenu {
+public class GameApplication {
 
     private ArrayList<Game> games = new ArrayList<>();
 

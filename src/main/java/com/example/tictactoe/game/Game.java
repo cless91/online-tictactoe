@@ -7,6 +7,7 @@ import static com.example.tictactoe.game.GAME_STATE.CREATED;
 import static com.example.tictactoe.game.MARK.*;
 
 public class Game {
+    private String id;
     private Player creator;
     private Player otherPlayer;
     private Player playerX;
@@ -20,6 +21,7 @@ public class Game {
     public Game(Player player) {
         creator = player;
         gameState = CREATED;
+        id = UUID.randomUUID().toString();
     }
 
     public Player getCreator() {
@@ -141,5 +143,9 @@ public class Game {
 
     public GAME_STATE getGameState() {
         return gameState;
+    }
+
+    public String getId() {
+        return id;
     }
 }

@@ -10,13 +10,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 class GameMenuTest {
     @Test
     void listGames_inNewlyLaunchedServer_shouldBeEmpty() {
-        GameMenu gameMenu = new GameMenu();
+        GameApplication gameMenu = new GameApplication();
         assertThat(gameMenu.listGames()).isEmpty();
     }
 
     @Test
     void givenNoGames_whenCreateNewGame_thenThereIsOneGame_andItsCreatorIsPlayer1() {
-        GameMenu gameMenu = new GameMenu();
+        GameApplication gameMenu = new GameApplication();
         Player player1 = new Player("player1");
         gameMenu.createNewGame(player1);
         List<Game> games = gameMenu.listGames();
@@ -28,7 +28,7 @@ class GameMenuTest {
     @Test
     void givenNewlyCreatedGameByPlayer_whenPlayer2JoinsTheGame_thenThereIsStillOnlyOneGame_andItsCreatorIsPlayer1_andItHasTwoPlayers() {
         //GIVEN
-        GameMenu gameMenu = new GameMenu();
+        GameApplication gameMenu = new GameApplication();
         Player player1 = new Player("player1");
         Player player2 = new Player("player2");
         Game newGame = gameMenu.createNewGame(player1);
@@ -47,7 +47,7 @@ class GameMenuTest {
     @Test
     void givenAGameWithTwoPlayer_noNewPlayerCanJoin() {
         //GIVEN
-        GameMenu gameMenu = new GameMenu();
+        GameApplication gameMenu = new GameApplication();
         Player player1 = new Player("player1");
         Player player2 = new Player("player2");
         Game newGame = gameMenu.createNewGame(player1);
@@ -63,7 +63,7 @@ class GameMenuTest {
     @Test
     void givenAGameCreatedByPlayer1_thenPlayer1CannotJoinItsOwnGame() {
         //GIVEN
-        GameMenu gameMenu = new GameMenu();
+        GameApplication gameMenu = new GameApplication();
         Player player1 = new Player("player1");
         Game newGame = gameMenu.createNewGame(player1);
 
