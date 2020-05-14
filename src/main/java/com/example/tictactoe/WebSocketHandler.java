@@ -86,12 +86,17 @@ public class WebSocketHandler extends AbstractWebSocketHandler {
     }
 
 
+
     void createGame(String sessionId) throws IOException {
         Game newGame = gameApplication.createNewGame(new Player(sessionId));
         GamePresentation newGamePresentation = toGamePresentation(newGame);
         Map<String,Object> data = new HashMap<>();
         data.put("opCode","gameCreated");
         data.put("newGame", newGamePresentation);
+        broadcast(data);
+    }
+
+    private void broadcast(Map<String, Object> data) throws IOException {
         for (WebSocketSession webSocketSession : sessions) {
             webSocketSession.sendMessage(new TextMessage(objectMapper.writeValueAsString(data)));
         }
