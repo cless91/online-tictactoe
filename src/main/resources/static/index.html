@@ -36,7 +36,7 @@
     socket.binaryType = "arraybuffer";
 
     createGame.onclick = function (event) {
-        var jqxhr = $.post( "http://localhost:8080/createGame/"+sessionId, function() {})
+        $.post( "http://localhost:8080/createGame/"+sessionId, function() {})
         .fail(function() {
             alert( "error creating game" );
         })
@@ -58,17 +58,34 @@
         }else if(opCode == 'gameCreated'){
             var newGame = data['newGame'];
             addToCurrentGames(newGame);
+        }else if(opCode == 'gameUpdated'){
+            var game = data['game'];
+            updateGame(game);
         }
     };
 
-    function addToCurrentGames(game) {
-        // currentGames.innerHTML += `<li class="list-group-item">${game.title} ${game.isJoinable ? '<button style="float: right" type="button" class="btn btn-primary btn-sm">join</button>' : ''}</li>`
-        currentGames.innerHTML += `<tr> <td>${game.title}</th> <td>${game.creator}</td> <td>${game.nbOfPlayers}</td> <td>${game.isJoinable ? '<button style="float: right" type="button" class="btn btn-primary btn-sm">join</button>' : ''}</td> </tr>`
+    function joinGame(gameId){
+        $.post( "http://localhost:8080/joinGame/"+gameId+"/"+sessionId, function() {
+            window.location.href = '/gamePage.html';
+        })
+            .fail(function() {
+                alert( "error joining game"+gameId );
+            })
     }
 
-    function addImageToWindow(image) {
-        let url = URL.createObjectURL(new Blob([image]));
-        messageWindow.innerHTML += `<img src="${url}"/>`
+    function updateGame(game) {
+        var gameDom = document.getElementById(game.id);
+        gameDom.outerHTML = gameToHtml(game)
+        console.log("coucou")
+    }
+
+    function addToCurrentGames(game) {
+        // currentGames.innerHTML += `<li class="list-group-item">${game.title} ${game.isJoinable ? '<button style="float: right" type="button" class="btn btn-primary btn-sm">join</button>' : ''}</li>`
+        currentGames.innerHTML += gameToHtml(game)
+    }
+
+    function gameToHtml(game) {
+        return `<tr id="${game.id}"> <td>${game.title}</th> <td>${game.creator}</td> <td>${game.nbOfPlayers}</td> <td>${game.isJoinable ? '<button onclick="joinGame(\'' + game.id + '\')" style="float: right" type="button" class="btn btn-primary btn-sm">join</button>' : ''}</td> </tr>`;
     }
 
 </script>

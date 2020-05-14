@@ -26,14 +26,6 @@ public class WebSocketHandler extends AbstractWebSocketHandler {
     static GameApplication gameApplication = new GameApplication();
     ObjectMapper objectMapper = new ObjectMapper();
 
-    public WebSocketHandler() {
-//        Game joinableGame = gameApplication.createNewGame(new Player("player test"));
-//        Player player1 = new Player("player1");
-//        Player player2 = new Player("player2");
-//        Game unjoinableGame = gameApplication.createNewGame(player1);
-//        unjoinableGame.join(player2);
-    }
-
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
         sessions.add(session);
@@ -85,8 +77,6 @@ public class WebSocketHandler extends AbstractWebSocketHandler {
         }
     }
 
-
-
     void createGame(String sessionId) throws IOException {
         Game newGame = gameApplication.createNewGame(new Player(sessionId));
         GamePresentation newGamePresentation = toGamePresentation(newGame);
@@ -100,5 +90,15 @@ public class WebSocketHandler extends AbstractWebSocketHandler {
         for (WebSocketSession webSocketSession : sessions) {
             webSocketSession.sendMessage(new TextMessage(objectMapper.writeValueAsString(data)));
         }
+    }
+
+    public void joinGame(String gameId, String sessionId) throws IOException {
+        Game game = gameApplication.getGameById(gameId).orElseThrow(() -> new IllegalArgumentException("unknown game id"));
+        game.join(new Player(sessionId));
+        GamePresentation gamePresentation = toGamePresentation(game);
+        Map<String,Object> data = new HashMap<>();
+        data.put("opCode","gameUpdated");
+        data.put("game", gamePresentation);
+        broadcast(data);
     }
 }

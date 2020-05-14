@@ -18,4 +18,8 @@ public class GameRestController {
         webSocketHandler.createGame(sessionId);
     }
 
+    @PostMapping("joinGame/{gameId}/{sessionId}")
+    public void joinGame(@PathVariable String gameId, @PathVariable String sessionId) throws IOException {
+        webSocketHandler.joinGame(gameId, sessionId);
+    }
 }
