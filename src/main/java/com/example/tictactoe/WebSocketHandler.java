@@ -4,10 +4,8 @@ import com.example.tictactoe.game.Game;
 import com.example.tictactoe.game.GameApplication;
 import com.example.tictactoe.game.Player;
 import com.example.tictactoe.presentation.GamePresentation;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.stereotype.Component;
 import org.springframework.web.socket.BinaryMessage;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
@@ -21,19 +19,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-@RestController
+@Component
 public class WebSocketHandler extends AbstractWebSocketHandler {
 
-    List<WebSocketSession> sessions = new ArrayList<>();
-    GameApplication gameApplication = new GameApplication();
+    static List<WebSocketSession> sessions = new ArrayList<>();
+    static GameApplication gameApplication = new GameApplication();
     ObjectMapper objectMapper = new ObjectMapper();
 
     public WebSocketHandler() {
-        Game joinableGame = gameApplication.createNewGame(new Player("player test"));
-        Player player1 = new Player("player1");
-        Player player2 = new Player("player2");
-        Game unjoinableGame = gameApplication.createNewGame(player1);
-        unjoinableGame.join(player2);
+//        Game joinableGame = gameApplication.createNewGame(new Player("player test"));
+//        Player player1 = new Player("player1");
+//        Player player2 = new Player("player2");
+//        Game unjoinableGame = gameApplication.createNewGame(player1);
+//        unjoinableGame.join(player2);
     }
 
     @Override
@@ -43,6 +41,7 @@ public class WebSocketHandler extends AbstractWebSocketHandler {
                 .map(this::toGamePresentation)
                 .collect(Collectors.toList());
         Map<String,Object> data = new HashMap<>();
+        data.put("opCode","mainPage");
         data.put("sessionId",session.getId());
         data.put("currentGames",gamePresentations);
         session.sendMessage(new TextMessage(objectMapper.writeValueAsString(data)));
@@ -86,14 +85,15 @@ public class WebSocketHandler extends AbstractWebSocketHandler {
         }
     }
 
-    @PostMapping("createGame")
-    public void createGame(String playerId) throws IOException {
-        Game newGame = gameApplication.createNewGame(new Player(playerId));
+
+    void createGame(String sessionId) throws IOException {
+        Game newGame = gameApplication.createNewGame(new Player(sessionId));
         GamePresentation newGamePresentation = toGamePresentation(newGame);
+        Map<String,Object> data = new HashMap<>();
+        data.put("opCode","gameCreated");
+        data.put("newGame", newGamePresentation);
         for (WebSocketSession webSocketSession : sessions) {
-            if (!webSocketSession.getId().equals(playerId)) {
-                webSocketSession.sendMessage(new TextMessage(objectMapper.writeValueAsString(newGamePresentation)));
-            }
+            webSocketSession.sendMessage(new TextMessage(objectMapper.writeValueAsString(data)));
         }
     }
 }

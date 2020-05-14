@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GameApplication {
-
     private ArrayList<Game> games = new ArrayList<>();
 
     public List<Game> listGames() {
