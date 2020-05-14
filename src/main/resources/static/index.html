@@ -2,85 +2,44 @@
 <head>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
           integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-    <style>
-        #messages {
-            text-align: left;
-            width: 50%;
-            padding: 1em;
-            border: 1px solid black;
-        }
-    </style>
     <title>Sample WebSocket Client</title>
 </head>
 <body>
 <div class="container">
     <h1>TIC TAC TOE</h1>
     <div>
-        <button type="button" class="btn btn-primary">Create</button>
+        <button id="createGame" type="button" class="btn btn-primary">Create</button>
     </div>
     <br/>
 
     <ul id="currentGames" class="list-group"></ul>
-
-    <div id="messages" class="messages"></div>
-    <div class="input-fields">
-        <p>Type a message and hit send:</p>
-        <input id="message"/>
-        <button id="send">Send</button>
-
-        <p>Select an image and hit send:</p>
-        <input type="file" id="file" accept="image/*"/>
-
-        <button id="sendImage">Send Image</button>
-    </div>
 </div>
 </body>
 <script>
+    var sessionId;
     const currentGames = document.getElementById("currentGames");
-    const messageWindow = document.getElementById("messages");
-
-    const sendButton = document.getElementById("send");
-    const messageInput = document.getElementById("message");
-
-    const fileInput = document.getElementById("file");
-    const sendImageButton = document.getElementById("sendImage");
+    const createGame = document.getElementById("createGame");
 
     const socket = new WebSocket("ws://localhost:8080/socket");
     socket.binaryType = "arraybuffer";
 
+    createGame.onclick = function (event) {
+        console.log('coucou')
+    };
+
     socket.onopen = function (event) {
-        addMessageToWindow("Connected");
     };
 
     socket.onmessage = function (event) {
-        var currentGames = JSON.parse(event.data);
+        var gameData = JSON.parse(event.data);
+        sessionId = gameData['sessionId'];
+        var currentGames = gameData['currentGames'];
         currentGames.forEach(function(game) {
             addToCurrentGames(game);
         });
     };
 
-    sendButton.onclick = function (event) {
-        sendMessage(messageInput.value);
-        messageInput.value = "";
-    };
-
-    sendImageButton.onclick = function (event) {
-        let file = fileInput.files[0];
-        sendMessage(file);
-        fileInput.value = null;
-    };
-
-    function sendMessage(message) {
-        socket.send(message);
-        addMessageToWindow("Sent Message: " + message);
-    }
-
-    function addMessageToWindow(message) {
-        messageWindow.innerHTML += `<div>${message}</div>`
-    }
-
     function addToCurrentGames(game) {
-        // currentGames.innerHTML += `<li class="list-group-item">${game.title}<button style="float: right" type="button" class="btn btn-primary btn-sm">join</button></li>`
         currentGames.innerHTML += `<li class="list-group-item">${game.title} ${game.isJoinable ? '<button style="float: right" type="button" class="btn btn-primary btn-sm">join</button>' : ''}</li>`
     }
 
@@ -88,6 +47,7 @@
         let url = URL.createObjectURL(new Blob([image]));
         messageWindow.innerHTML += `<img src="${url}"/>`
     }
+
 </script>
 <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
         integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
