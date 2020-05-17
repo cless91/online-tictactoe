@@ -1,4 +1,4 @@
-package com.example.tictactoe.game;
+package com.example.tictactoe.entity;
 
 import com.example.tictactoe.infra.InMemoryGameRepository;
 import org.assertj.core.api.Assertions;

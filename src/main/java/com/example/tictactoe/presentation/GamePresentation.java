@@ -1,8 +1,8 @@
 package com.example.tictactoe.presentation;
 
-import com.example.tictactoe.game.GAME_STATE;
-import com.example.tictactoe.game.Game;
-import com.example.tictactoe.game.Player;
+import com.example.tictactoe.entity.GAME_STATE;
+import com.example.tictactoe.entity.Game;
+import com.example.tictactoe.entity.Player;
 
 public class GamePresentation {
     public String id;

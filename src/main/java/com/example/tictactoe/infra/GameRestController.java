@@ -1,6 +1,8 @@
 package com.example.tictactoe.infra;
 
 import com.example.tictactoe.presentation.GamePresentation;
+import com.example.tictactoe.usecase.CreateGameUsecase;
+import com.example.tictactoe.usecase.JoinGameUsecase;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -12,10 +14,13 @@ import java.io.IOException;
 public class GameRestController {
 
     @Autowired
-    ListGamesSocketHandler listGamesSocketHandler;
+    private ListGamesSocketHandler listGamesSocketHandler;
 
     @Autowired
-    CreateGameUsecase createGameUsecase;
+    private CreateGameUsecase createGameUsecase;
+
+    @Autowired
+    private JoinGameUsecase joinGameUsecase;
 
     @PostMapping("createGame/{sessionId}")
     public GamePresentation createGame(@PathVariable String sessionId) throws IOException {
@@ -24,7 +29,7 @@ public class GameRestController {
 
     @PostMapping("joinGame/{gameId}/{sessionId}")
     public void joinGame(@PathVariable String gameId, @PathVariable String sessionId) throws IOException {
-        listGamesSocketHandler.joinGame(gameId, sessionId);
+        joinGameUsecase.joinGame(gameId, sessionId);
     }
 
     @PostMapping("gameData/{gameId}")

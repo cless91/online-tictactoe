@@ -1,11 +1,10 @@
 package com.example.tictactoe.infra;
 
-import com.example.tictactoe.game.*;
+import com.example.tictactoe.entity.*;
 import com.example.tictactoe.presentation.GamePresentation;
+import com.example.tictactoe.usecase.JoinGameUsecase;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import org.springframework.web.socket.BinaryMessage;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
@@ -68,16 +67,6 @@ public class ListGamesSocketHandler extends AbstractWebSocketHandler {
         for (WebSocketSession webSocketSession : ListGamesSessions) {
             webSocketSession.sendMessage(new TextMessage(objectMapper.writeValueAsString(data)));
         }
-    }
-
-    public void joinGame(String gameId, String sessionId) throws IOException {
-        Game game = gameRepository.getGameById(gameId).orElseThrow(() -> new IllegalArgumentException("unknown game id"));
-        game.join(new Player(sessionId));
-        GamePresentation gamePresentation = GamePresentation.fromGame(game);
-        Map<String,Object> data = new HashMap<>();
-        data.put("opCode","gameUpdated");
-        data.put("game", gamePresentation);
-        broadcast(data);
     }
 
     public Optional<GamePresentation> getGameData(String gameId){

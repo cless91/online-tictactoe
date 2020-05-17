@@ -1,13 +1,12 @@
-package com.example.tictactoe.game;
+package com.example.tictactoe.entity;
 
-import org.assertj.core.api.Assertions;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static com.example.tictactoe.game.GAME_STATE.O_WINS;
-import static com.example.tictactoe.game.GAME_STATE.X_WINS;
-import static com.example.tictactoe.game.MARK.*;
+import static com.example.tictactoe.entity.GAME_STATE.O_WINS;
+import static com.example.tictactoe.entity.GAME_STATE.X_WINS;
+import static com.example.tictactoe.entity.MARK.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 

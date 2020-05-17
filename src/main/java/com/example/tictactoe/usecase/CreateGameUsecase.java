@@ -1,11 +1,11 @@
-package com.example.tictactoe.infra;
+package com.example.tictactoe.usecase;
 
-import com.example.tictactoe.game.Game;
-import com.example.tictactoe.game.GameFactory;
-import com.example.tictactoe.game.Player;
+import com.example.tictactoe.entity.Game;
+import com.example.tictactoe.entity.GameFactory;
+import com.example.tictactoe.entity.Player;
+import com.example.tictactoe.infra.ListGamesSocketHandler;
 import com.example.tictactoe.presentation.GamePresentation;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -16,8 +16,7 @@ public class CreateGameUsecase {
     private final GameFactory gameFactory;
 
     private final ListGamesSocketHandler socketHandler;
-
-    GamePresentation createGame(String sessionId) throws IOException {
+    public GamePresentation createGame(String sessionId) throws IOException {
         Game newGame = gameFactory.createNewGame(new Player(sessionId));
         GamePresentation newGamePresentation = GamePresentation.fromGame(newGame);
         Map<String, Object> data = new HashMap<String, Object>();

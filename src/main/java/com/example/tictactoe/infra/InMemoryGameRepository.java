@@ -1,7 +1,7 @@
 package com.example.tictactoe.infra;
 
-import com.example.tictactoe.game.Game;
-import com.example.tictactoe.game.GameRepository;
+import com.example.tictactoe.entity.Game;
+import com.example.tictactoe.entity.GameRepository;
 
 import java.util.ArrayList;
 import java.util.List;

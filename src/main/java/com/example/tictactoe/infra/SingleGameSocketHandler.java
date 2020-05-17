@@ -1,6 +1,6 @@
 package com.example.tictactoe.infra;
 
-import com.example.tictactoe.game.GameRepository;
+import com.example.tictactoe.entity.GameRepository;
 import com.example.tictactoe.presentation.GamePresentation;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,7 +49,7 @@ public class SingleGameSocketHandler extends AbstractWebSocketHandler {
         sessions.forEach((s, webSocketSessions) -> webSocketSessions.remove(session));
     }
 
-    private void broadcast(String gameId, Map<String, Object> data) {
+    public void broadcast(String gameId, Map<String, Object> data) {
         List<WebSocketSession> webSocketSessions = Optional.ofNullable(sessions.get(gameId))
                 .orElseThrow(() -> new IllegalArgumentException(String.format("unknown gameId %s", gameId)));
         webSocketSessions.forEach(webSocketSession -> {

@@ -1,10 +1,10 @@
-package com.example.tictactoe.game;
+package com.example.tictactoe.entity;
 
 import java.util.*;
 
-import static com.example.tictactoe.game.GAME_STATE.*;
-import static com.example.tictactoe.game.GAME_STATE.CREATED;
-import static com.example.tictactoe.game.MARK.*;
+import static com.example.tictactoe.entity.GAME_STATE.*;
+import static com.example.tictactoe.entity.GAME_STATE.CREATED;
+import static com.example.tictactoe.entity.MARK.*;
 
 public class Game {
     private String id;

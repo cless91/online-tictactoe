@@ -1,10 +1,12 @@
 package com.example.tictactoe;
 
-import com.example.tictactoe.game.GameFactory;
-import com.example.tictactoe.game.GameRepository;
-import com.example.tictactoe.infra.CreateGameUsecase;
+import com.example.tictactoe.entity.GameFactory;
+import com.example.tictactoe.entity.GameRepository;
+import com.example.tictactoe.infra.SingleGameSocketHandler;
+import com.example.tictactoe.usecase.CreateGameUsecase;
 import com.example.tictactoe.infra.InMemoryGameRepository;
 import com.example.tictactoe.infra.ListGamesSocketHandler;
+import com.example.tictactoe.usecase.JoinGameUsecase;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -37,5 +39,15 @@ public class TicTacToeApplication {
                                                          ObjectMapper objectMapper) {
         return new ListGamesSocketHandler(gameRepository, objectMapper);
     }
+
+    @Bean
+    public JoinGameUsecase joinGameUsecase(GameRepository gameRepository,
+                                           ListGamesSocketHandler listGamesSocketHandler,
+                                           SingleGameSocketHandler singleGameSocketHandler) {
+        return new JoinGameUsecase(gameRepository,
+                listGamesSocketHandler,
+                singleGameSocketHandler);
+    }
+
 
 }

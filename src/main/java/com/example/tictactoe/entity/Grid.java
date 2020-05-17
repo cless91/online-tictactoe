@@ -1,8 +1,8 @@
-package com.example.tictactoe.game;
+package com.example.tictactoe.entity;
 
 import java.util.Arrays;
 
-import static com.example.tictactoe.game.MARK.*;
+import static com.example.tictactoe.entity.MARK.*;
 
 public class Grid {
     private MARK[] marks;
