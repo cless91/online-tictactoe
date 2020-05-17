@@ -3,6 +3,7 @@ package com.example.tictactoe.infra;
 import com.example.tictactoe.game.*;
 import com.example.tictactoe.presentation.GamePresentation;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.BinaryMessage;
@@ -15,16 +16,12 @@ import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@Component
+@AllArgsConstructor
 public class ListGamesSocketHandler extends AbstractWebSocketHandler {
 
     static List<WebSocketSession> ListGamesSessions = new ArrayList<>();
-    @Autowired
-    GameRepository gameRepository;
-    @Autowired
-    GameFactory gameFactory;
-
-    ObjectMapper objectMapper = new ObjectMapper();
+    private final GameRepository gameRepository;
+    private final ObjectMapper objectMapper;
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
@@ -67,17 +64,7 @@ public class ListGamesSocketHandler extends AbstractWebSocketHandler {
         }
     }
 
-    GamePresentation createGame(String sessionId) throws IOException {
-        Game newGame = gameFactory.createNewGame(new Player(sessionId));
-        GamePresentation newGamePresentation = GamePresentation.fromGame(newGame);
-        Map<String,Object> data = new HashMap<>();
-        data.put("opCode","gameCreated");
-        data.put("newGame", newGamePresentation);
-        broadcast(data);
-        return newGamePresentation;
-    }
-
-    private void broadcast(Map<String, Object> data) throws IOException {
+    public void broadcast(Map<String, Object> data) throws IOException {
         for (WebSocketSession webSocketSession : ListGamesSessions) {
             webSocketSession.sendMessage(new TextMessage(objectMapper.writeValueAsString(data)));
         }

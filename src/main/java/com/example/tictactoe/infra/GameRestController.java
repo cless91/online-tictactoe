@@ -14,9 +14,12 @@ public class GameRestController {
     @Autowired
     ListGamesSocketHandler listGamesSocketHandler;
 
+    @Autowired
+    CreateGameUsecase createGameUsecase;
+
     @PostMapping("createGame/{sessionId}")
     public GamePresentation createGame(@PathVariable String sessionId) throws IOException {
-        return listGamesSocketHandler.createGame(sessionId);
+        return createGameUsecase.createGame(sessionId);
     }
 
     @PostMapping("joinGame/{gameId}/{sessionId}")
