@@ -10,16 +10,17 @@ import static org.assertj.core.api.Assertions.assertThat;
 class GameMenuTest {
     @Test
     void listGames_inNewlyLaunchedServer_shouldBeEmpty() {
-        GameApplication gameMenu = new GameApplication();
+        InMemoryGameRepository gameMenu = new InMemoryGameRepository();
         assertThat(gameMenu.listGames()).isEmpty();
     }
 
     @Test
     void givenNoGames_whenCreateNewGame_thenThereIsOneGame_andItsCreatorIsPlayer1() {
-        GameApplication gameMenu = new GameApplication();
+        GameRepository gameRepository = new InMemoryGameRepository();
+        GameFactory gameMenu = new GameFactory(gameRepository);
         Player player1 = new Player("player1");
         gameMenu.createNewGame(player1);
-        List<Game> games = gameMenu.listGames();
+        List<Game> games = gameRepository.listGames();
         assertThat(games).hasSize(1);
         Game game = games.get(0);
         assertThat(game).extracting(Game::getCreator).isEqualTo(player1);
@@ -28,16 +29,17 @@ class GameMenuTest {
     @Test
     void givenNewlyCreatedGameByPlayer_whenPlayer2JoinsTheGame_thenThereIsStillOnlyOneGame_andItsCreatorIsPlayer1_andItHasTwoPlayers() {
         //GIVEN
-        GameApplication gameMenu = new GameApplication();
+        GameRepository gameRepository = new InMemoryGameRepository();
+        GameFactory gameFactory = new GameFactory(gameRepository);
         Player player1 = new Player("player1");
         Player player2 = new Player("player2");
-        Game newGame = gameMenu.createNewGame(player1);
+        Game newGame = gameFactory.createNewGame(player1);
 
         //WHEN
         newGame.join(player2);
 
         //THEN
-        List<Game> games = gameMenu.listGames();
+        List<Game> games = gameRepository.listGames();
         assertThat(games).hasSize(1);
         Game game = games.get(0);
         assertThat(game).extracting(Game::getCreator).isEqualTo(player1);
@@ -47,10 +49,11 @@ class GameMenuTest {
     @Test
     void givenAGameWithTwoPlayer_noNewPlayerCanJoin() {
         //GIVEN
-        GameApplication gameMenu = new GameApplication();
+        GameRepository gameRepository = new InMemoryGameRepository();
+        GameFactory gameFactory = new GameFactory(gameRepository);
         Player player1 = new Player("player1");
         Player player2 = new Player("player2");
-        Game newGame = gameMenu.createNewGame(player1);
+        Game newGame = gameFactory.createNewGame(player1);
         newGame.join(player2);
 
         //WHEN
@@ -63,9 +66,10 @@ class GameMenuTest {
     @Test
     void givenAGameCreatedByPlayer1_thenPlayer1CannotJoinItsOwnGame() {
         //GIVEN
-        GameApplication gameMenu = new GameApplication();
+        GameRepository gameRepository = new InMemoryGameRepository();
+        GameFactory gameFactory = new GameFactory(gameRepository);
         Player player1 = new Player("player1");
-        Game newGame = gameMenu.createNewGame(player1);
+        Game newGame = gameFactory.createNewGame(player1);
 
         //WHEN
         Assertions.assertThatThrownBy(() -> newGame.join(player1))

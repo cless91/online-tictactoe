@@ -1,8 +1,6 @@
 package com.example.tictactoe;
 
-import com.example.tictactoe.game.Game;
-import com.example.tictactoe.game.GameApplication;
-import com.example.tictactoe.game.Player;
+import com.example.tictactoe.game.*;
 import com.example.tictactoe.presentation.GamePresentation;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,13 +20,16 @@ public class ListGamesSocketHandler extends AbstractWebSocketHandler {
 
     static List<WebSocketSession> ListGamesSessions = new ArrayList<>();
     @Autowired
-    GameApplication gameApplication;
+    GameRepository gameRepository;
+    @Autowired
+    GameFactory gameFactory;
+
     ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
         ListGamesSessions.add(session);
-        List<GamePresentation> gamePresentations = gameApplication.listGames().stream()
+        List<GamePresentation> gamePresentations = gameRepository.listGames().stream()
                 .map(GamePresentation::fromGame)
                 .collect(Collectors.toList());
         Map<String,Object> data = new HashMap<>();
@@ -67,7 +68,7 @@ public class ListGamesSocketHandler extends AbstractWebSocketHandler {
     }
 
     GamePresentation createGame(String sessionId) throws IOException {
-        Game newGame = gameApplication.createNewGame(new Player(sessionId));
+        Game newGame = gameFactory.createNewGame(new Player(sessionId));
         GamePresentation newGamePresentation = GamePresentation.fromGame(newGame);
         Map<String,Object> data = new HashMap<>();
         data.put("opCode","gameCreated");
@@ -83,7 +84,7 @@ public class ListGamesSocketHandler extends AbstractWebSocketHandler {
     }
 
     public void joinGame(String gameId, String sessionId) throws IOException {
-        Game game = gameApplication.getGameById(gameId).orElseThrow(() -> new IllegalArgumentException("unknown game id"));
+        Game game = gameRepository.getGameById(gameId).orElseThrow(() -> new IllegalArgumentException("unknown game id"));
         game.join(new Player(sessionId));
         GamePresentation gamePresentation = GamePresentation.fromGame(game);
         Map<String,Object> data = new HashMap<>();
@@ -93,7 +94,7 @@ public class ListGamesSocketHandler extends AbstractWebSocketHandler {
     }
 
     public Optional<GamePresentation> getGameData(String gameId){
-        return gameApplication.getGameById(gameId)
+        return gameRepository.getGameById(gameId)
                 .map(GamePresentation::fromGame);
     }
 }

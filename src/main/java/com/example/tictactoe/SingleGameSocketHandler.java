@@ -1,13 +1,11 @@
 package com.example.tictactoe;
 
-import com.example.tictactoe.game.Game;
-import com.example.tictactoe.game.GameApplication;
+import com.example.tictactoe.game.InMemoryGameRepository;
 import com.example.tictactoe.presentation.GamePresentation;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.MultiValueMap;
-import org.springframework.web.socket.BinaryMessage;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
@@ -17,14 +15,13 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.io.IOException;
 import java.net.URI;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Component
 public class SingleGameSocketHandler extends AbstractWebSocketHandler {
 
     static Map<String, List<WebSocketSession>> sessions = new HashMap<>();
     @Autowired
-    GameApplication gameApplication;
+    InMemoryGameRepository gameApplication;
     ObjectMapper objectMapper = new ObjectMapper();
 
     @Override

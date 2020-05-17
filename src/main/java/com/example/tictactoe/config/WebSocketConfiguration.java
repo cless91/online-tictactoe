@@ -1,5 +1,7 @@
-package com.example.tictactoe;
+package com.example.tictactoe.config;
 
+import com.example.tictactoe.ListGamesSocketHandler;
+import com.example.tictactoe.SingleGameSocketHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
