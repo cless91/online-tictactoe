@@ -1,4 +1,4 @@
-package com.example.tictactoe;
+package com.example.tictactoe.infra;
 
 public class GameNotFoundException extends RuntimeException {
     public GameNotFoundException(String message) {

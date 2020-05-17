@@ -1,5 +1,6 @@
 package com.example.tictactoe.game;
 
+import com.example.tictactoe.infra.InMemoryGameRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 

@@ -2,7 +2,7 @@ package com.example.tictactoe;
 
 import com.example.tictactoe.game.GameFactory;
 import com.example.tictactoe.game.GameRepository;
-import com.example.tictactoe.game.InMemoryGameRepository;
+import com.example.tictactoe.infra.InMemoryGameRepository;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;

@@ -1,4 +1,4 @@
-package com.example.tictactoe;
+package com.example.tictactoe.infra;
 
 import com.example.tictactoe.game.*;
 import com.example.tictactoe.presentation.GamePresentation;

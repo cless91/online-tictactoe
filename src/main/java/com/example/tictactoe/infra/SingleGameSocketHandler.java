@@ -1,7 +1,6 @@
-package com.example.tictactoe;
+package com.example.tictactoe.infra;
 
 import com.example.tictactoe.game.GameRepository;
-import com.example.tictactoe.game.InMemoryGameRepository;
 import com.example.tictactoe.presentation.GamePresentation;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
