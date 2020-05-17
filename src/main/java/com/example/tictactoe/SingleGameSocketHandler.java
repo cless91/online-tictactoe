@@ -13,14 +13,11 @@ import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.AbstractWebSocketHandler;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
-public class WebSocketHandler extends AbstractWebSocketHandler {
+public class SingleGameSocketHandler extends AbstractWebSocketHandler {
 
     static List<WebSocketSession> sessions = new ArrayList<>();
     static GameApplication gameApplication = new GameApplication();
@@ -29,15 +26,7 @@ public class WebSocketHandler extends AbstractWebSocketHandler {
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
         sessions.add(session);
-        List<GamePresentation> gamePresentations = gameApplication.listGames().stream()
-                .map(this::toGamePresentation)
-                .collect(Collectors.toList());
-        Map<String,Object> data = new HashMap<>();
-        data.put("opCode","mainPage");
-        data.put("sessionId",session.getId());
-        data.put("currentGames",gamePresentations);
-        session.sendMessage(new TextMessage(objectMapper.writeValueAsString(data)));
-        super.afterConnectionEstablished(session);
+        session.sendMessage(new TextMessage("objectMapper.writeValueAsString(data)"));
     }
 
     private GamePresentation toGamePresentation(Game game) {
@@ -47,6 +36,8 @@ public class WebSocketHandler extends AbstractWebSocketHandler {
         gamePresentation.creator = game.getCreator().getId();
         gamePresentation.nbOfPlayers = game.listPlayers().size();
         gamePresentation.isJoinable = game.listPlayers().size() < 2 ;
+        gamePresentation.gameState = game.getGameState();
+        gamePresentation.otherPlayer = game.getOtherPlayer().map(Player::getId).orElse(null);
         return gamePresentation;
     }
 
@@ -77,13 +68,14 @@ public class WebSocketHandler extends AbstractWebSocketHandler {
         }
     }
 
-    void createGame(String sessionId) throws IOException {
+    GamePresentation createGame(String sessionId) throws IOException {
         Game newGame = gameApplication.createNewGame(new Player(sessionId));
         GamePresentation newGamePresentation = toGamePresentation(newGame);
         Map<String,Object> data = new HashMap<>();
         data.put("opCode","gameCreated");
         data.put("newGame", newGamePresentation);
         broadcast(data);
+        return newGamePresentation;
     }
 
     private void broadcast(Map<String, Object> data) throws IOException {
@@ -100,5 +92,10 @@ public class WebSocketHandler extends AbstractWebSocketHandler {
         data.put("opCode","gameUpdated");
         data.put("game", gamePresentation);
         broadcast(data);
+    }
+
+    public Optional<GamePresentation> getGameData(String gameId){
+        return gameApplication.getGameById(gameId)
+                .map(this::toGamePresentation);
     }
 }

@@ -12,7 +12,7 @@
     </div>
     <br/>
 
-<!--    <ul id="currentGames" class="list-group"></ul>-->
+    <!--    <ul id="currentGames" class="list-group"></ul>-->
     <table class="table">
         <thead>
         <tr>
@@ -22,7 +22,7 @@
             <th scope="col"></th>
         </tr>
         </thead>
-        <tbody id="currentGames" >
+        <tbody id="currentGames">
         </tbody>
     </table>
 </div>
@@ -36,10 +36,12 @@
     socket.binaryType = "arraybuffer";
 
     createGame.onclick = function (event) {
-        $.post( "http://localhost:8080/createGame/"+sessionId, function() {})
-        .fail(function() {
-            alert( "error creating game" );
+        $.post("http://localhost:8080/createGame/" + sessionId, function (gameData) {
+            window.location.href = '/gamePage/gamePage.html?gameId=' + gameData.id;
         })
+            .fail(function () {
+                alert("error creating game");
+            })
     };
 
     socket.onopen = function (event) {
@@ -49,28 +51,28 @@
         var data = JSON.parse(event.data);
         var opCode = data['opCode'];
 
-        if(opCode == 'mainPage'){
+        if (opCode == 'mainPage') {
             sessionId = data['sessionId'];
             var currentGames = data['currentGames'];
-            currentGames.forEach(function(game) {
+            currentGames.forEach(function (game) {
                 addToCurrentGames(game);
             });
-        }else if(opCode == 'gameCreated'){
+        } else if (opCode == 'gameCreated') {
             var newGame = data['newGame'];
             addToCurrentGames(newGame);
-        }else if(opCode == 'gameUpdated'){
+        } else if (opCode == 'gameUpdated') {
             var game = data['game'];
             updateGame(game);
         }
     };
 
-    function joinGame(gameId){
-        $.post( "http://localhost:8080/joinGame/"+gameId+"/"+sessionId, function() {
-            window.location.href = '/gamePage.html';
+    function joinGame(gameId) {
+        $.post("http://localhost:8080/joinGame/" + gameId + "/" + sessionId, function () {
+            window.location.href = '/gamePage/gamePage.html?gameId=' + gameId;
         })
-            .fail(function() {
-                alert( "error joining game"+gameId );
-            })
+        .fail(function () {
+            alert("error joining game" + gameId);
+        });
     }
 
     function updateGame(game) {

@@ -17,6 +17,7 @@ public class Game {
     private MARK currentmark;
     private GAME_STATE gameState;
     private Set<GAME_STATE> gameOverStates = new HashSet<>(Arrays.asList(X_WINS, O_WINS, DRAW));
+    private Set<GAME_STATE> gameNotStartedStates = new HashSet<>(Arrays.asList(CREATED, STARTING));
 
     public Game(Player player) {
         creator = player;
@@ -50,7 +51,9 @@ public class Game {
     }
 
     public void start() {
-        gameState = ONGOING;
+        if(otherPlayer == null){
+            throw new GameNotReadyException(String.format("cannot start the game %s. Another player must join first.", id));
+        }
         if (new Random().nextDouble() < 0.5) {
             playerX = creator;
             playerO = otherPlayer;
@@ -61,13 +64,15 @@ public class Game {
         grid = Grid.newEmptyGrid();
         currentPlayer = playerX;
         currentmark = X;
+        gameState = STARTED;
     }
 
     public void play(Player player, int xCoord, int yCoord) {
-        if (gameOverStates.contains(gameState)) {
+        if (gameNotStartedStates.contains(gameState)) {
+            throw new GameNotStartedException(String.format("player %s tried to play but the game has not started yet.", player));
+        }else if (gameOverStates.contains(gameState)) {
             throw new GameOverException(String.format("player %s tried to play but the game is over.", player));
-        }
-        if (player != currentPlayer) {
+        }else if (player != currentPlayer) {
             throw new WrongPlayerException(String.format("player %s is not allowed to play now", player));
         }
         grid.mark(xCoord, yCoord, currentmark);
@@ -147,5 +152,9 @@ public class Game {
 
     public String getId() {
         return id;
+    }
+
+    public Optional<Player> getOtherPlayer() {
+        return Optional.ofNullable(otherPlayer);
     }
 }

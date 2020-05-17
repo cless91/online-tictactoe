@@ -235,4 +235,18 @@ class GameTest {
             softAssertions.assertThatThrownBy(() -> game.play(playerX, 0, 0)).isInstanceOf(GameOverException.class);
         });
     }
+
+    @Test
+    void cannotPlayOnAGameThatIsNotStarted() {
+        Player p1 = new Player("p1");
+        Game game = new Game(p1);
+        assertThatThrownBy(() -> game.play(p1,0,0)).isInstanceOf(GameNotStartedException.class);
+    }
+
+    @Test
+    void cannotStartAGameIfNoOtherPlayerHasJoined() {
+        Player p1 = new Player("p1");
+        Game game = new Game(p1);
+        assertThatThrownBy(game::start).isInstanceOf(GameNotReadyException.class);
+    }
 }

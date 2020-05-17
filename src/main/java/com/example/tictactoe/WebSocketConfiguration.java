@@ -12,7 +12,8 @@ import org.springframework.web.socket.server.standard.ServletServerContainerFact
 public class WebSocketConfiguration implements WebSocketConfigurer {
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-        registry.addHandler(new WebSocketHandler(), "/socket").setAllowedOrigins("*");
+        registry.addHandler(new ListGamesSocketHandler(), "/socket").setAllowedOrigins("*");
+        registry.addHandler(new ListGamesSocketHandler(), "/socket").setAllowedOrigins("*");
     }
 
     @Bean

@@ -1,5 +1,6 @@
 package com.example.tictactoe;
 
+import com.example.tictactoe.presentation.GamePresentation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -11,15 +12,22 @@ import java.io.IOException;
 public class GameRestController {
 
     @Autowired
-    WebSocketHandler webSocketHandler;
+    ListGamesSocketHandler listGamesSocketHandler;
 
     @PostMapping("createGame/{sessionId}")
-    public void createGame(@PathVariable String sessionId) throws IOException {
-        webSocketHandler.createGame(sessionId);
+    public GamePresentation createGame(@PathVariable String sessionId) throws IOException {
+        return listGamesSocketHandler.createGame(sessionId);
     }
 
     @PostMapping("joinGame/{gameId}/{sessionId}")
     public void joinGame(@PathVariable String gameId, @PathVariable String sessionId) throws IOException {
-        webSocketHandler.joinGame(gameId, sessionId);
+        listGamesSocketHandler.joinGame(gameId, sessionId);
+    }
+
+    @PostMapping("gameData/{gameId}")
+    public GamePresentation getGameData(@PathVariable String gameId) throws IOException {
+        return listGamesSocketHandler.getGameData(gameId).orElseThrow(
+                () -> new GameNotFoundException(String.format("game not found : %s", gameId))
+        );
     }
 }
