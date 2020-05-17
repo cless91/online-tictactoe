@@ -5,6 +5,7 @@ import com.example.tictactoe.presentation.GamePresentation;
 import com.example.tictactoe.usecase.JoinGameUsecase;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
+import org.springframework.stereotype.Component;
 import org.springframework.web.socket.BinaryMessage;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
@@ -15,6 +16,7 @@ import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Component
 @AllArgsConstructor
 public class ListGamesSocketHandler extends AbstractWebSocketHandler {
 

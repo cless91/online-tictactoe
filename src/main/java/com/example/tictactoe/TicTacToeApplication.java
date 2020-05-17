@@ -35,12 +35,6 @@ public class TicTacToeApplication {
     }
 
     @Bean
-    public ListGamesSocketHandler listGamesSocketHandler(GameRepository gameRepository,
-                                                         ObjectMapper objectMapper) {
-        return new ListGamesSocketHandler(gameRepository, objectMapper);
-    }
-
-    @Bean
     public JoinGameUsecase joinGameUsecase(GameRepository gameRepository,
                                            ListGamesSocketHandler listGamesSocketHandler,
                                            SingleGameSocketHandler singleGameSocketHandler) {
@@ -48,6 +42,4 @@ public class TicTacToeApplication {
                 listGamesSocketHandler,
                 singleGameSocketHandler);
     }
-
-
 }
