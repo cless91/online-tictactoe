@@ -2,100 +2,67 @@ package com.example.tictactoe;
 
 import com.example.tictactoe.game.Game;
 import com.example.tictactoe.game.GameApplication;
-import com.example.tictactoe.game.Player;
 import com.example.tictactoe.presentation.GamePresentation;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.socket.BinaryMessage;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.AbstractWebSocketHandler;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
+import java.net.URI;
 import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
 public class SingleGameSocketHandler extends AbstractWebSocketHandler {
 
-    static List<WebSocketSession> sessions = new ArrayList<>();
-    static GameApplication gameApplication = new GameApplication();
+    static Map<String, List<WebSocketSession>> sessions = new HashMap<>();
+    @Autowired
+    GameApplication gameApplication;
     ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
-        sessions.add(session);
-        session.sendMessage(new TextMessage("objectMapper.writeValueAsString(data)"));
-    }
+        System.out.println();
+        URI requestUri = Objects.requireNonNull(session.getUri());
+        MultiValueMap<String, String> params = UriComponentsBuilder.fromUri(requestUri).build().getQueryParams();
 
-    private GamePresentation toGamePresentation(Game game) {
-        GamePresentation gamePresentation = new GamePresentation();
-        gamePresentation.id = game.getId();
-        gamePresentation.title = "game-"+game.getId();
-        gamePresentation.creator = game.getCreator().getId();
-        gamePresentation.nbOfPlayers = game.listPlayers().size();
-        gamePresentation.isJoinable = game.listPlayers().size() < 2 ;
-        gamePresentation.gameState = game.getGameState();
-        gamePresentation.otherPlayer = game.getOtherPlayer().map(Player::getId).orElse(null);
-        return gamePresentation;
+        String gameId = Optional.ofNullable(params.getFirst("gameId")).orElseThrow(
+                () -> new IllegalArgumentException("client should send the gameId when connecting to the server"));
+
+        sessions.putIfAbsent(gameId, new ArrayList<>());
+        sessions.get(gameId).add(session);
+        GamePresentation gamePresentation = gameApplication.getGameById(gameId)
+                .map(GamePresentation::fromGame)
+                .orElseThrow(() -> new IllegalArgumentException(String.format("game %s not found", gameId)));
+        Map<String, Object> gameData = new HashMap<>();
+        gameData.put("opCode", "gameUpdated");
+        gameData.put("game", gamePresentation);
+        broadcast(gameId, gameData);
     }
 
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
-        sessions.remove(session);
-        super.afterConnectionClosed(session, status);
+        sessions.forEach((s, webSocketSessions) -> webSocketSessions.remove(session));
     }
 
-    @Override
-    protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
-        System.out.printf("txt msg received: %s\n", message.getPayload());
-        TextMessage textMessage = new TextMessage(String.format("%s: %s", session.getId(), message.getPayload()));
-        for (WebSocketSession webSocketSession : sessions) {
-            if (!webSocketSession.equals(session)) {
-                webSocketSession.sendMessage(textMessage);
+    private void broadcast(String gameId, Map<String, Object> data) {
+        List<WebSocketSession> webSocketSessions = Optional.ofNullable(sessions.get(gameId))
+                .orElseThrow(() -> new IllegalArgumentException(String.format("unknown gameId %s", gameId)));
+        webSocketSessions.forEach(webSocketSession -> {
+            try {
+                webSocketSession.sendMessage(new TextMessage(objectMapper.writeValueAsString(data)));
+            } catch (IOException e) {
+                throw new RuntimeException(e);
             }
-        }
+        });
     }
 
-    @Override
-    protected void handleBinaryMessage(WebSocketSession session, BinaryMessage message) throws Exception {
-        System.out.println("binary msg received");
-        for (WebSocketSession webSocketSession : sessions) {
-            if (!webSocketSession.equals(session)) {
-                webSocketSession.sendMessage(message);
-            }
-        }
-    }
 
-    GamePresentation createGame(String sessionId) throws IOException {
-        Game newGame = gameApplication.createNewGame(new Player(sessionId));
-        GamePresentation newGamePresentation = toGamePresentation(newGame);
-        Map<String,Object> data = new HashMap<>();
-        data.put("opCode","gameCreated");
-        data.put("newGame", newGamePresentation);
-        broadcast(data);
-        return newGamePresentation;
-    }
-
-    private void broadcast(Map<String, Object> data) throws IOException {
-        for (WebSocketSession webSocketSession : sessions) {
-            webSocketSession.sendMessage(new TextMessage(objectMapper.writeValueAsString(data)));
-        }
-    }
-
-    public void joinGame(String gameId, String sessionId) throws IOException {
-        Game game = gameApplication.getGameById(gameId).orElseThrow(() -> new IllegalArgumentException("unknown game id"));
-        game.join(new Player(sessionId));
-        GamePresentation gamePresentation = toGamePresentation(game);
-        Map<String,Object> data = new HashMap<>();
-        data.put("opCode","gameUpdated");
-        data.put("game", gamePresentation);
-        broadcast(data);
-    }
-
-    public Optional<GamePresentation> getGameData(String gameId){
-        return gameApplication.getGameById(gameId)
-                .map(this::toGamePresentation);
-    }
 }

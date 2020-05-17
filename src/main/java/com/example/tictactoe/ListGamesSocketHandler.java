@@ -5,6 +5,7 @@ import com.example.tictactoe.game.GameApplication;
 import com.example.tictactoe.game.Player;
 import com.example.tictactoe.presentation.GamePresentation;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.BinaryMessage;
 import org.springframework.web.socket.CloseStatus;
@@ -20,14 +21,15 @@ import java.util.stream.Collectors;
 public class ListGamesSocketHandler extends AbstractWebSocketHandler {
 
     static List<WebSocketSession> ListGamesSessions = new ArrayList<>();
-    static GameApplication gameApplication = new GameApplication();
+    @Autowired
+    GameApplication gameApplication;
     ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
         ListGamesSessions.add(session);
         List<GamePresentation> gamePresentations = gameApplication.listGames().stream()
-                .map(this::toGamePresentation)
+                .map(GamePresentation::fromGame)
                 .collect(Collectors.toList());
         Map<String,Object> data = new HashMap<>();
         data.put("opCode","mainPage");
@@ -35,18 +37,6 @@ public class ListGamesSocketHandler extends AbstractWebSocketHandler {
         data.put("currentGames",gamePresentations);
         session.sendMessage(new TextMessage(objectMapper.writeValueAsString(data)));
         super.afterConnectionEstablished(session);
-    }
-
-    private GamePresentation toGamePresentation(Game game) {
-        GamePresentation gamePresentation = new GamePresentation();
-        gamePresentation.id = game.getId();
-        gamePresentation.title = "game-"+game.getId();
-        gamePresentation.creator = game.getCreator().getId();
-        gamePresentation.nbOfPlayers = game.listPlayers().size();
-        gamePresentation.isJoinable = game.listPlayers().size() < 2 ;
-        gamePresentation.gameState = game.getGameState();
-        gamePresentation.otherPlayer = game.getOtherPlayer().map(Player::getId).orElse(null);
-        return gamePresentation;
     }
 
     @Override
@@ -78,7 +68,7 @@ public class ListGamesSocketHandler extends AbstractWebSocketHandler {
 
     GamePresentation createGame(String sessionId) throws IOException {
         Game newGame = gameApplication.createNewGame(new Player(sessionId));
-        GamePresentation newGamePresentation = toGamePresentation(newGame);
+        GamePresentation newGamePresentation = GamePresentation.fromGame(newGame);
         Map<String,Object> data = new HashMap<>();
         data.put("opCode","gameCreated");
         data.put("newGame", newGamePresentation);
@@ -95,7 +85,7 @@ public class ListGamesSocketHandler extends AbstractWebSocketHandler {
     public void joinGame(String gameId, String sessionId) throws IOException {
         Game game = gameApplication.getGameById(gameId).orElseThrow(() -> new IllegalArgumentException("unknown game id"));
         game.join(new Player(sessionId));
-        GamePresentation gamePresentation = toGamePresentation(game);
+        GamePresentation gamePresentation = GamePresentation.fromGame(game);
         Map<String,Object> data = new HashMap<>();
         data.put("opCode","gameUpdated");
         data.put("game", gamePresentation);
@@ -104,6 +94,6 @@ public class ListGamesSocketHandler extends AbstractWebSocketHandler {
 
     public Optional<GamePresentation> getGameData(String gameId){
         return gameApplication.getGameById(gameId)
-                .map(this::toGamePresentation);
+                .map(GamePresentation::fromGame);
     }
 }

@@ -26,8 +26,9 @@ public class GameRestController {
 
     @PostMapping("gameData/{gameId}")
     public GamePresentation getGameData(@PathVariable String gameId) throws IOException {
-        return listGamesSocketHandler.getGameData(gameId).orElseThrow(
+        GamePresentation gamePresentation = listGamesSocketHandler.getGameData(gameId).orElseThrow(
                 () -> new GameNotFoundException(String.format("game not found : %s", gameId))
         );
+        return gamePresentation;
     }
 }
