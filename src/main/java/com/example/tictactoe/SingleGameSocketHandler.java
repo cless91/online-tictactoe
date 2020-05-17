@@ -1,5 +1,6 @@
 package com.example.tictactoe;
 
+import com.example.tictactoe.game.GameRepository;
 import com.example.tictactoe.game.InMemoryGameRepository;
 import com.example.tictactoe.presentation.GamePresentation;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -21,7 +22,7 @@ public class SingleGameSocketHandler extends AbstractWebSocketHandler {
 
     static Map<String, List<WebSocketSession>> sessions = new HashMap<>();
     @Autowired
-    InMemoryGameRepository gameApplication;
+    GameRepository gameApplication;
     ObjectMapper objectMapper = new ObjectMapper();
 
     @Override

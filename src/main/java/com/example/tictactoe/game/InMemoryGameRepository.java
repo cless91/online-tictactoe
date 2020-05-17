@@ -1,12 +1,9 @@
 package com.example.tictactoe.game;
 
-import org.springframework.stereotype.Component;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-@Component
 public class InMemoryGameRepository implements GameRepository {
     private ArrayList<Game> games = new ArrayList<>();
 
