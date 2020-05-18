@@ -6,9 +6,15 @@ import com.example.tictactoe.usecase.JoinGameUsecase;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.UUID;
 
 @RestController
 public class GameRestController {
@@ -22,14 +28,14 @@ public class GameRestController {
     @Autowired
     private JoinGameUsecase joinGameUsecase;
 
-    @PostMapping("createGame/{sessionId}")
-    public GamePresentation createGame(@PathVariable String sessionId) throws IOException {
-        return createGameUsecase.createGame(sessionId);
+    @PostMapping("createGame/{playerId}")
+    public GamePresentation createGame(@PathVariable String playerId) throws IOException {
+        return createGameUsecase.createGame(playerId);
     }
 
-    @PostMapping("joinGame/{gameId}/{sessionId}")
-    public void joinGame(@PathVariable String gameId, @PathVariable String sessionId) throws IOException {
-        joinGameUsecase.joinGame(gameId, sessionId);
+    @PostMapping("joinGame/{gameId}/{playerId}")
+    public void joinGame(@PathVariable String gameId, @PathVariable String playerId) throws IOException {
+        joinGameUsecase.joinGame(gameId, playerId);
     }
 
     @PostMapping("gameData/{gameId}")

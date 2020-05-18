@@ -28,7 +28,7 @@
 </div>
 </body>
 <script>
-    var sessionId;
+    var playerId = document.cookie;
     const currentGames = document.getElementById("currentGames");
     const createGame = document.getElementById("createGame");
 
@@ -36,12 +36,12 @@
     socket.binaryType = "arraybuffer";
 
     createGame.onclick = function (event) {
-        $.post("http://localhost:8080/createGame/" + sessionId, function (gameData) {
+        $.post("http://localhost:8080/createGame/" + playerId, function (gameData) {
             window.location.href = '/gamePage/gamePage.html?gameId=' + gameData.id;
         })
-            .fail(function () {
-                alert("error creating game");
-            })
+        .fail(function () {
+            alert("error creating game");
+        })
     };
 
     socket.onopen = function (event) {
@@ -52,7 +52,6 @@
         var opCode = data['opCode'];
 
         if (opCode == 'mainPage') {
-            sessionId = data['sessionId'];
             var currentGames = data['currentGames'];
             currentGames.forEach(function (game) {
                 addToCurrentGames(game);
@@ -67,7 +66,7 @@
     };
 
     function joinGame(gameId) {
-        $.post("http://localhost:8080/joinGame/" + gameId + "/" + sessionId, function () {
+        $.post("http://localhost:8080/joinGame/" + gameId + "/" + playerId, function () {
             window.location.href = '/gamePage/gamePage.html?gameId=' + gameId;
         })
         .fail(function () {
@@ -82,7 +81,6 @@
     }
 
     function addToCurrentGames(game) {
-        // currentGames.innerHTML += `<li class="list-group-item">${game.title} ${game.isJoinable ? '<button style="float: right" type="button" class="btn btn-primary btn-sm">join</button>' : ''}</li>`
         currentGames.innerHTML += gameToHtml(game)
     }
 

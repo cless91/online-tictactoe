@@ -15,14 +15,15 @@ import java.util.Map;
 public class CreateGameUsecase {
     private final GameFactory gameFactory;
 
-    private final ListGamesSocketHandler socketHandler;
+    private final ListGamesSocketHandler listGamesSocketHandler;
+
     public GamePresentation createGame(String sessionId) throws IOException {
         Game newGame = gameFactory.createNewGame(new Player(sessionId));
         GamePresentation newGamePresentation = GamePresentation.fromGame(newGame);
         Map<String, Object> data = new HashMap<String, Object>();
         data.put("opCode", "gameCreated");
         data.put("newGame", newGamePresentation);
-        socketHandler.broadcast(data);
+        listGamesSocketHandler.broadcast(data);
         return newGamePresentation;
     }
 }

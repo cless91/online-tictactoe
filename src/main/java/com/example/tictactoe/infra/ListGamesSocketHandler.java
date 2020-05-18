@@ -32,7 +32,6 @@ public class ListGamesSocketHandler extends AbstractWebSocketHandler {
                 .collect(Collectors.toList());
         Map<String,Object> data = new HashMap<>();
         data.put("opCode","mainPage");
-        data.put("sessionId",session.getId());
         data.put("currentGames",gamePresentations);
         session.sendMessage(new TextMessage(objectMapper.writeValueAsString(data)));
         super.afterConnectionEstablished(session);
