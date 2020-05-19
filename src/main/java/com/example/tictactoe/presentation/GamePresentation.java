@@ -16,6 +16,7 @@ public class GamePresentation {
     public String otherPlayer;
     public String playerX;
     public String playerO;
+    public String currentPlayer;
 
     public static GamePresentation fromGame(Game game){
         GamePresentation gamePresentation = new GamePresentation();
@@ -28,6 +29,7 @@ public class GamePresentation {
         gamePresentation.otherPlayer = game.getOtherPlayer().map(Player::getId).orElse(null);
         gamePresentation.playerX = Optional.ofNullable(game.getPlayerX()).map(Player::getId).orElse(null);
         gamePresentation.playerO = Optional.ofNullable(game.getPlayerO()).map(Player::getId).orElse(null);
+        gamePresentation.currentPlayer = Optional.ofNullable(game.getCurrentPlayer()).map(Player::getId).orElse(null);
         return gamePresentation;
     }
 }

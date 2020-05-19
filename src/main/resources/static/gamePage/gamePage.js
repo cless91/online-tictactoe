@@ -7,6 +7,9 @@ const socket = new WebSocket("ws://localhost:8080/singleGame?gameId="+gameId);
 socket.binaryType = "arraybuffer";
 
 const startGameElem = document.getElementById("startGame");
+const ongoingGameState = document.getElementById("ongoingGameState");
+const playerAssignment = document.getElementById("playerAssignment");
+const currentPlayer = document.getElementById("currentPlayer");
 
 socket.onopen = function (event) {
 };
@@ -46,5 +49,23 @@ function updateGameDisplayFromGameData(){
 
     if(gameData.gameState === "READY" && playerId === gameData.creator){
         startGameElem.innerHTML = '<button onclick="startGame(\'' + gameData.id + '\')" type="button" class="btn btn-primary btn-sm">Start Game</button>'
+    }else if(gameData.gameState === "STARTED") {
+        var assignmentSelf = getAssignment(playerId)
+        var assignmentCurrentPlayer = getAssignment(gameData.currentPlayer)
+        ongoingGameState.style.display = "inherit";
+        playerAssignment.innerHTML = `<b>${assignmentSelf}</b>`;
+        currentPlayer.innerHTML = `<b>${assignmentCurrentPlayer}</b>`;
     }
+}
+
+function getAssignment(playerId){
+    var assignment;
+    if(gameData.playerX === playerId){
+        assignment = "X";
+    } else if(gameData.playerO === playerId){
+        assignment = "O";
+    } else{
+        assignment = "unknown";
+    }
+    return assignment
 }

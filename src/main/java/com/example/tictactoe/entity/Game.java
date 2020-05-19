@@ -157,4 +157,8 @@ public class Game {
     public Optional<Player> getOtherPlayer() {
         return Optional.ofNullable(otherPlayer);
     }
+
+    public Player getCurrentPlayer() {
+        return currentPlayer;
+    }
 }
