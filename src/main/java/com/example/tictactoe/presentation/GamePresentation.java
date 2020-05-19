@@ -1,8 +1,8 @@
 package com.example.tictactoe.presentation;
 
-import com.example.tictactoe.entity.GAME_STATE;
-import com.example.tictactoe.entity.Game;
-import com.example.tictactoe.entity.Player;
+import com.example.tictactoe.entity.*;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.Optional;
 
@@ -17,6 +17,7 @@ public class GamePresentation {
     public String playerX;
     public String playerO;
     public String currentPlayer;
+    public MARK[] grid;
 
     public static GamePresentation fromGame(Game game){
         GamePresentation gamePresentation = new GamePresentation();
@@ -30,6 +31,7 @@ public class GamePresentation {
         gamePresentation.playerX = Optional.ofNullable(game.getPlayerX()).map(Player::getId).orElse(null);
         gamePresentation.playerO = Optional.ofNullable(game.getPlayerO()).map(Player::getId).orElse(null);
         gamePresentation.currentPlayer = Optional.ofNullable(game.getCurrentPlayer()).map(Player::getId).orElse(null);
+        gamePresentation.grid = Optional.ofNullable(game.getGrid()).map(Grid::getMarks).orElse(null);
         return gamePresentation;
     }
 }

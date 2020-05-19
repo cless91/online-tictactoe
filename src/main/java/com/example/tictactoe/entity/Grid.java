@@ -2,9 +2,9 @@ package com.example.tictactoe.entity;
 
 import java.util.Arrays;
 
-import static com.example.tictactoe.entity.MARK.*;
+import static com.example.tictactoe.entity.MARK.NONE;
 
-public class Grid {
+public class Grid implements Cloneable {
     private MARK[] marks;
 
     private Grid() {
@@ -51,5 +51,9 @@ public class Grid {
     public MARK markAt(int xCoord, int yCoord) {
         int coord = xCoord * 3 + yCoord;
         return marks[coord];
+    }
+
+    public MARK[] getMarks() {
+        return marks;
     }
 }

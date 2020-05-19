@@ -7,6 +7,7 @@ import com.example.tictactoe.usecase.CreateGameUsecase;
 import com.example.tictactoe.infra.InMemoryGameRepository;
 import com.example.tictactoe.infra.ListGamesSocketHandler;
 import com.example.tictactoe.usecase.JoinGameUsecase;
+import com.example.tictactoe.usecase.PlayUsecase;
 import com.example.tictactoe.usecase.StartGameUsecase;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.boot.SpringApplication;
@@ -37,11 +38,6 @@ public class TicTacToeApplication {
     }
 
     @Bean
-    public StartGameUsecase startGameUsecase(GameRepository gameRepository, SingleGameSocketHandler singleGameSocketHandler) {
-        return new StartGameUsecase(gameRepository, singleGameSocketHandler);
-    }
-
-    @Bean
     public JoinGameUsecase joinGameUsecase(GameRepository gameRepository,
                                            ListGamesSocketHandler listGamesSocketHandler,
                                            SingleGameSocketHandler singleGameSocketHandler) {
@@ -49,4 +45,15 @@ public class TicTacToeApplication {
                 listGamesSocketHandler,
                 singleGameSocketHandler);
     }
+
+    @Bean
+    public StartGameUsecase startGameUsecase(GameRepository gameRepository, SingleGameSocketHandler singleGameSocketHandler) {
+        return new StartGameUsecase(gameRepository, singleGameSocketHandler);
+    }
+
+    @Bean
+    public PlayUsecase playUsecase(GameRepository gameRepository, SingleGameSocketHandler singleGameSocketHandler) {
+        return new PlayUsecase(gameRepository, singleGameSocketHandler);
+    }
+
 }

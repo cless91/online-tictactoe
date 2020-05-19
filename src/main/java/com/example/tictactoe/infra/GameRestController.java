@@ -3,6 +3,7 @@ package com.example.tictactoe.infra;
 import com.example.tictactoe.presentation.GamePresentation;
 import com.example.tictactoe.usecase.CreateGameUsecase;
 import com.example.tictactoe.usecase.JoinGameUsecase;
+import com.example.tictactoe.usecase.PlayUsecase;
 import com.example.tictactoe.usecase.StartGameUsecase;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,11 +30,14 @@ public class GameRestController {
     @Autowired
     private StartGameUsecase startGameUsecase;
 
+    @Autowired
+    private PlayUsecase playUsecase;
+
     @RequestMapping("/")
     public ModelAndView homePage(@CookieValue(value = "playerId", required = false) String playerId,
                                  HttpServletResponse response) throws IOException {
         System.out.println();
-        if(StringUtils.isBlank(playerId)) {
+        if (StringUtils.isBlank(playerId)) {
             playerId = String.format("anon-player-%s", UUID.randomUUID().toString());
             response.addCookie(new Cookie("playerId", playerId));
         }
@@ -50,16 +54,21 @@ public class GameRestController {
         joinGameUsecase.joinGame(gameId, playerId);
     }
 
-    @PostMapping("startGame/{gameId}")
-    public void startGame(@PathVariable String gameId) throws IOException {
-        startGameUsecase.startGame(gameId);
-    }
-
     @PostMapping("gameData/{gameId}")
     public GamePresentation getGameData(@PathVariable String gameId) throws IOException {
         GamePresentation gamePresentation = listGamesSocketHandler.getGameData(gameId).orElseThrow(
                 () -> new GameNotFoundException(String.format("game not found : %s", gameId))
         );
         return gamePresentation;
+    }
+
+    @PostMapping("startGame/{gameId}")
+    public void startGame(@PathVariable String gameId) throws IOException {
+        startGameUsecase.startGame(gameId);
+    }
+
+    @PostMapping("play/{gameId}/{playerId}")
+    public void play(@PathVariable String gameId, @PathVariable String playerId, @RequestParam int x, @RequestParam int y) throws IOException {
+        playUsecase.play(gameId, playerId, x, y);
     }
 }

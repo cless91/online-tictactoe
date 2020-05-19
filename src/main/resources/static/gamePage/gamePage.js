@@ -3,13 +3,13 @@ var gameData;
 const gameId = new URLSearchParams(window.location.search).get('gameId');
 var playerId = Cookies.get('playerId');
 
-const socket = new WebSocket("ws://localhost:8080/singleGame?gameId="+gameId);
+const socket = new WebSocket("ws://localhost:8080/singleGame?gameId=" + gameId);
 socket.binaryType = "arraybuffer";
 
 const startGameElem = document.getElementById("startGame");
 const ongoingGameState = document.getElementById("ongoingGameState");
-const playerAssignment = document.getElementById("playerAssignment");
-const currentPlayer = document.getElementById("currentPlayer");
+const playerAssignmentElem = document.getElementById("playerAssignment");
+const currentPlayerElem = document.getElementById("currentPlayer");
 
 socket.onopen = function (event) {
 };
@@ -24,48 +24,70 @@ socket.onmessage = function (event) {
     }
 };
 
-$.post( "http://localhost:8080/gameData/"+gameId, function(data) {
+$.post("http://localhost:8080/gameData/" + gameId, function (data) {
     gameData = data;
     updateGameDisplayFromGameData();
-})
-.fail(function() {
-    alert( "error getting game information data" );
+}).fail(function () {
+    alert("error getting game information data");
 });
 
 function startGame(gameId) {
     $.post("http://localhost:8080/startGame/" + gameId, function () {
         window.location.href = '/gamePage/gamePage.html?gameId=' + gameId;
-    })
-        .fail(function () {
-            alert("error starting game" + gameId);
-        });
+    }).fail(function () {
+        alert("error starting game" + gameId);
+    });
 }
 
-function updateGameDisplayFromGameData(){
-    document.getElementById("gameTitle").innerHTML=gameData.title;
-    document.getElementById("gameState").innerHTML=gameData.gameState;
-    document.getElementById("player1").innerHTML=gameData.creator;
-    document.getElementById("player2").innerHTML=gameData.otherPlayer;
+function redrawGrid() {
+    if(gameData.grid !== null){
+        var mark;
+        for (let i = 0; i < 9; i++) {
+            mark = gameData.grid[i];
+            document.getElementsByClassName("box")[i].innerHTML = mark;
+        }
+    }
+}
 
-    if(gameData.gameState === "READY" && playerId === gameData.creator){
+function updateGameDisplayFromGameData() {
+    document.getElementById("gameTitle").innerHTML = gameData.title;
+    document.getElementById("gameState").innerHTML = gameData.gameState;
+    document.getElementById("player1").innerHTML = gameData.creator;
+    document.getElementById("player2").innerHTML = gameData.otherPlayer;
+
+    if (gameData.gameState === "READY" && playerId === gameData.creator) {
         startGameElem.innerHTML = '<button onclick="startGame(\'' + gameData.id + '\')" type="button" class="btn btn-primary btn-sm">Start Game</button>'
-    }else if(gameData.gameState === "STARTED") {
+    } else if (gameData.gameState === "STARTED") {
         var assignmentSelf = getAssignment(playerId)
         var assignmentCurrentPlayer = getAssignment(gameData.currentPlayer)
         ongoingGameState.style.display = "inherit";
-        playerAssignment.innerHTML = `<b>${assignmentSelf}</b>`;
-        currentPlayer.innerHTML = `<b>${assignmentCurrentPlayer}</b>`;
+        playerAssignmentElem.innerHTML = `<b>${assignmentSelf}</b>`;
+        currentPlayerElem.innerHTML = `<b>${assignmentCurrentPlayer}</b>`;
     }
+
+    redrawGrid();
 }
 
-function getAssignment(playerId){
+function getAssignment(playerId) {
     var assignment;
-    if(gameData.playerX === playerId){
+    if (gameData.playerX === playerId) {
         assignment = "X";
-    } else if(gameData.playerO === playerId){
+    } else if (gameData.playerO === playerId) {
         assignment = "O";
-    } else{
+    } else {
         assignment = "unknown";
     }
     return assignment
+}
+
+function play(x, y) {
+    if (gameData.currentPlayer === playerId) {
+        $.post("http://localhost:8080/play/" + gameId+"/"+playerId+"?x="+x+"&y="+y, function () {
+            window.location.href = '/gamePage/gamePage.html?gameId=' + gameId;
+        }).fail(function () {
+            alert("error playing game" + gameId);
+        });
+    } else {
+        console.log("not your turn")
+    }
 }
