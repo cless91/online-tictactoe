@@ -3,13 +3,10 @@ package com.example.tictactoe.infra;
 import com.example.tictactoe.presentation.GamePresentation;
 import com.example.tictactoe.usecase.CreateGameUsecase;
 import com.example.tictactoe.usecase.JoinGameUsecase;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
@@ -27,6 +24,17 @@ public class GameRestController {
 
     @Autowired
     private JoinGameUsecase joinGameUsecase;
+
+    @RequestMapping("/")
+    public ModelAndView homePage(@CookieValue(value = "playerId", required = false) String playerId,
+                                 HttpServletResponse response) throws IOException {
+        System.out.println();
+        if(StringUtils.isBlank(playerId)) {
+            playerId = String.format("anon-player-%s", UUID.randomUUID().toString());
+            response.addCookie(new Cookie("playerId", playerId));
+        }
+        return new ModelAndView("index");
+    }
 
     @PostMapping("createGame/{playerId}")
     public GamePresentation createGame(@PathVariable String playerId) throws IOException {

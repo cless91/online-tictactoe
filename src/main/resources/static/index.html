@@ -27,8 +27,10 @@
     </table>
 </div>
 </body>
+<script type="application/javascript" src="https://cdn.jsdelivr.net/npm/js-cookie@rc/dist/js.cookie.min.js"></script>
 <script>
-    var playerId = document.cookie;
+    var playerId = Cookies.get('playerId');
+
     const currentGames = document.getElementById("currentGames");
     const createGame = document.getElementById("createGame");
 
