@@ -17,7 +17,7 @@ public class Game {
     private MARK currentmark;
     private GAME_STATE gameState;
     private Set<GAME_STATE> gameOverStates = new HashSet<>(Arrays.asList(X_WINS, O_WINS, DRAW));
-    private Set<GAME_STATE> gameNotStartedStates = new HashSet<>(Arrays.asList(CREATED, STARTING));
+    private Set<GAME_STATE> gameNotStartedStates = new HashSet<>(Arrays.asList(CREATED, READY));
 
     public Game(Player player) {
         creator = player;
@@ -36,7 +36,7 @@ public class Game {
             throw new GameJoinException(String.format("the creator of the game cannot join its own game. Player: %s", otherPlayer));
         }
         this.otherPlayer = otherPlayer;
-        this.gameState = STARTING;
+        this.gameState = READY;
     }
 
     public List<Player> listPlayers() {

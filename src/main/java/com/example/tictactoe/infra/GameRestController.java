@@ -3,6 +3,7 @@ package com.example.tictactoe.infra;
 import com.example.tictactoe.presentation.GamePresentation;
 import com.example.tictactoe.usecase.CreateGameUsecase;
 import com.example.tictactoe.usecase.JoinGameUsecase;
+import com.example.tictactoe.usecase.StartGameUsecase;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -25,6 +26,9 @@ public class GameRestController {
     @Autowired
     private JoinGameUsecase joinGameUsecase;
 
+    @Autowired
+    private StartGameUsecase startGameUsecase;
+
     @RequestMapping("/")
     public ModelAndView homePage(@CookieValue(value = "playerId", required = false) String playerId,
                                  HttpServletResponse response) throws IOException {
@@ -44,6 +48,11 @@ public class GameRestController {
     @PostMapping("joinGame/{gameId}/{playerId}")
     public void joinGame(@PathVariable String gameId, @PathVariable String playerId) throws IOException {
         joinGameUsecase.joinGame(gameId, playerId);
+    }
+
+    @PostMapping("startGame/{gameId}")
+    public void startGame(@PathVariable String gameId) throws IOException {
+        startGameUsecase.startGame(gameId);
     }
 
     @PostMapping("gameData/{gameId}")
