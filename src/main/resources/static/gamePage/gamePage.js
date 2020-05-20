@@ -11,6 +11,8 @@ const ongoingGameState = document.getElementById("ongoingGameState");
 const playerAssignmentElem = document.getElementById("playerAssignment");
 const currentPlayerElem = document.getElementById("currentPlayer");
 
+const endGameStates = ["X_WINS", "O_WINS", "DRAW"]
+
 socket.onopen = function (event) {
 };
 
@@ -32,20 +34,34 @@ $.post("http://localhost:8080/gameData/" + gameId, function (data) {
 });
 
 function startGame(gameId) {
-    $.post("http://localhost:8080/startGame/" + gameId, function () {
-        window.location.href = '/gamePage/gamePage.html?gameId=' + gameId;
-    }).fail(function () {
-        alert("error starting game" + gameId);
-    });
+    $.post("http://localhost:8080/startGame/" + gameId)
+        .fail(function () {
+            alert("error starting game" + gameId);
+        });
 }
 
 function redrawGrid() {
-    if(gameData.grid !== null){
+    if (gameData.grid !== null) {
         var mark;
         for (let i = 0; i < 9; i++) {
             mark = gameData.grid[i];
             document.getElementsByClassName("box")[i].innerHTML = mark;
         }
+    }
+}
+
+function isGameOver() {
+    return endGameStates.indexOf(gameData.gameState) !== -1;
+}
+
+function displayGameOverAndRedirect() {
+    if (gameData.gameState === "DRAW") {
+        alert("draw, let's play another one !");
+    }
+    if ((gameData.gameState === "X_WINS" && getAssignment(playerId) === "X") || (gameData.gameState === "O_WINS" && getAssignment(playerId) === "O")) {
+        alert("congratulations, you won ! Let's keep that streak going.");
+    } else {
+        alert("sory, you lost ! Maybe next time ...");
     }
 }
 
@@ -57,7 +73,9 @@ function updateGameDisplayFromGameData() {
 
     if (gameData.gameState === "READY" && playerId === gameData.creator) {
         startGameElem.innerHTML = '<button onclick="startGame(\'' + gameData.id + '\')" type="button" class="btn btn-primary btn-sm">Start Game</button>'
-    } else if (gameData.gameState === "STARTED") {
+    }
+
+    if (gameData.gameState === "STARTED") {
         var assignmentSelf = getAssignment(playerId)
         var assignmentCurrentPlayer = getAssignment(gameData.currentPlayer)
         ongoingGameState.style.display = "inherit";
@@ -66,6 +84,10 @@ function updateGameDisplayFromGameData() {
     }
 
     redrawGrid();
+
+    if (isGameOver()) {
+        displayGameOverAndRedirect();
+    }
 }
 
 function getAssignment(playerId) {
@@ -82,11 +104,10 @@ function getAssignment(playerId) {
 
 function play(x, y) {
     if (gameData.currentPlayer === playerId) {
-        $.post("http://localhost:8080/play/" + gameId+"/"+playerId+"?x="+x+"&y="+y, function () {
-            window.location.href = '/gamePage/gamePage.html?gameId=' + gameId;
-        }).fail(function () {
-            alert("error playing game" + gameId);
-        });
+        $.post("http://localhost:8080/play/" + gameId + "/" + playerId + "?x=" + x + "&y=" + y)
+            .fail(function () {
+                alert("error playing game" + gameId);
+            });
     } else {
         console.log("not your turn")
     }

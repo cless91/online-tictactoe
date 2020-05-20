@@ -26,7 +26,6 @@ public class SingleGameSocketHandler extends AbstractWebSocketHandler {
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
-        System.out.println();
         URI requestUri = Objects.requireNonNull(session.getUri());
         MultiValueMap<String, String> params = UriComponentsBuilder.fromUri(requestUri).build().getQueryParams();
 
@@ -35,13 +34,6 @@ public class SingleGameSocketHandler extends AbstractWebSocketHandler {
 
         sessions.putIfAbsent(gameId, new ArrayList<>());
         sessions.get(gameId).add(session);
-        GamePresentation gamePresentation = gameApplication.getGameById(gameId)
-                .map(GamePresentation::fromGame)
-                .orElseThrow(() -> new IllegalArgumentException(String.format("game %s not found", gameId)));
-        Map<String, Object> gameData = new HashMap<>();
-        gameData.put("opCode", "gameUpdated");
-        gameData.put("game", gamePresentation);
-        broadcast(gameId, gameData);
     }
 
     @Override
