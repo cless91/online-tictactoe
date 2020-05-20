@@ -114,6 +114,14 @@ public class Game {
         } else if ((markDiagonalTopLeft.equals(O) && winsDiagonalTopLeft) || (markDiagonalTopRight.equals(O) && winsDiagonalTopRight)) {
             gameState = O_WINS;
         }
+
+        checkDraw();
+    }
+
+    private void checkDraw() {
+        if(Arrays.stream(grid.getMarks()).noneMatch(mark -> mark.equals(NONE))){
+            gameState = DRAW;
+        }
     }
 
     private void checkWinnerOnRowOrColumn(MARK markRow, boolean winsRow, MARK markColumn, boolean winsColumn) {

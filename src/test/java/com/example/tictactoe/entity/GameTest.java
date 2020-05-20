@@ -4,8 +4,7 @@ import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static com.example.tictactoe.entity.GAME_STATE.O_WINS;
-import static com.example.tictactoe.entity.GAME_STATE.X_WINS;
+import static com.example.tictactoe.entity.GAME_STATE.*;
 import static com.example.tictactoe.entity.MARK.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -247,5 +246,34 @@ class GameTest {
         Player p1 = new Player("p1");
         Game game = new Game(p1);
         assertThatThrownBy(game::start).isInstanceOf(GameNotReadyException.class);
+    }
+
+    @Test
+    void draw() {
+        game.play(playerX, 1, 1);
+        game.play(playerO, 1, 2);
+        game.play(playerX, 0, 1);
+        game.play(playerO, 0, 2);
+        game.play(playerX, 1, 0);
+        game.play(playerO, 0, 0);
+        game.play(playerX, 2, 0);
+        game.play(playerO, 2, 1);
+        game.play(playerX, 2, 2);
+
+        //       |     |
+        //    O  |  X  |  O
+        //  _____|_____|_____
+        //       |     |
+        //    X  |  X  |  O
+        //  _____|_____|_____
+        //       |     |
+        //    X  |  O  |  X
+        //       |     |
+
+        SoftAssertions.assertSoftly(softAssertions -> {
+            softAssertions.assertThat(game.getGameState()).isEqualTo(DRAW);
+            softAssertions.assertThatThrownBy(() -> game.play(playerO, 0, 0)).isInstanceOf(GameOverException.class);
+            softAssertions.assertThatThrownBy(() -> game.play(playerX, 0, 0)).isInstanceOf(GameOverException.class);
+        });
     }
 }
