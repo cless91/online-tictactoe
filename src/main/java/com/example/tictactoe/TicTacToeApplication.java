@@ -2,6 +2,7 @@ package com.example.tictactoe;
 
 import com.example.tictactoe.entity.GameFactory;
 import com.example.tictactoe.entity.GameRepository;
+import com.example.tictactoe.infra.GameEndingRepositoryInMemory;
 import com.example.tictactoe.infra.SingleGameSocketHandler;
 import com.example.tictactoe.usecase.*;
 import com.example.tictactoe.infra.InMemoryGameRepository;
@@ -54,8 +55,15 @@ public class TicTacToeApplication {
     }
 
     @Bean
-    public AckEndGameUsecase ackEndGameUsecase(ListGamesSocketHandler listGamesSocketHandler) {
-        return new AckEndGameUsecase(listGamesSocketHandler);
+    public GameEndingRepository gameEndingRepository(){
+        return new GameEndingRepositoryInMemory();
+    }
+
+    @Bean
+    public AckEndGameUsecase ackEndGameUsecase(ListGamesSocketHandler listGamesSocketHandler,
+                                               GameRepository gameRepository,
+                                               GameEndingRepository gameEndingRepository) {
+        return new AckEndGameUsecase(listGamesSocketHandler, gameRepository, gameEndingRepository);
     }
 
 }

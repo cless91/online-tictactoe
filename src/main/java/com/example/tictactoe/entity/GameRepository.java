@@ -5,8 +5,7 @@ import java.util.Optional;
 
 public interface GameRepository {
     List<Game> listGames();
-
     Optional<Game> getGameById(String gameId);
-
-    Game save(Game game);
+    void save(Game game);
+    void delete(Game game);
 }

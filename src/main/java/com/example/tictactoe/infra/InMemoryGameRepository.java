@@ -28,8 +28,12 @@ public class InMemoryGameRepository implements GameRepository {
     }
 
     @Override
-    public Game save(Game game) {
+    public void save(Game game) {
         games.add(game);
-        return game;
+    }
+
+    @Override
+    public void delete(Game game) {
+        games.remove(game);
     }
 }
