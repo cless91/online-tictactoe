@@ -56,13 +56,13 @@ function isGameOver() {
 
 function displayGameOverAndRedirect() {
     if (gameData.gameState === "DRAW") {
-        alert("draw, let's play another one !");
-    }
-    if ((gameData.gameState === "X_WINS" && getAssignment(playerId) === "X") || (gameData.gameState === "O_WINS" && getAssignment(playerId) === "O")) {
-        alert("congratulations, you won ! Let's keep that streak going.");
+        $('#result').text("draw, let's play another one !");
+    } else if ((gameData.gameState === "X_WINS" && getAssignment(playerId) === "X") || (gameData.gameState === "O_WINS" && getAssignment(playerId) === "O")) {
+        $('#result').text("congratulations, you won ! Let's keep that streak going.");
     } else {
-        alert("sory, you lost ! Maybe next time ...");
+        $('#result').text("sorry, you lost ! Maybe next time ...");
     }
+    $('#resultPopup').modal('show')
 }
 
 function updateGameDisplayFromGameData() {
@@ -111,4 +111,22 @@ function play(x, y) {
     } else {
         console.log("not your turn")
     }
+}
+
+function ackEndGameThenGamesList() {
+    $.post("http://localhost:8080/ackEndGame/" + gameId + "/" + playerId, function () {
+        window.location.href = '/';
+    })
+        .fail(function () {
+            alert("error ack end game for game" + gameId);
+        });
+}
+
+function ackEndGameThenMainMenu() {
+    $.post("http://localhost:8080/ackEndGame/" + gameId + "/" + playerId, function () {
+        window.location.href = '/mainMenu/mainMenu.html';
+    })
+        .fail(function () {
+            alert("error ack end game for game" + gameId);
+        });
 }

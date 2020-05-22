@@ -1,14 +1,12 @@
 package com.example.tictactoe.infra;
 
 import com.example.tictactoe.presentation.GamePresentation;
-import com.example.tictactoe.usecase.CreateGameUsecase;
-import com.example.tictactoe.usecase.JoinGameUsecase;
-import com.example.tictactoe.usecase.PlayUsecase;
-import com.example.tictactoe.usecase.StartGameUsecase;
+import com.example.tictactoe.usecase.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.view.RedirectView;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
@@ -33,15 +31,23 @@ public class GameRestController {
     @Autowired
     private PlayUsecase playUsecase;
 
+    @Autowired
+    private AckEndGameUsecase ackEndGameUsecase;
+
     @RequestMapping("/")
     public ModelAndView homePage(@CookieValue(value = "playerId", required = false) String playerId,
                                  HttpServletResponse response) throws IOException {
-        System.out.println();
         if (StringUtils.isBlank(playerId)) {
             playerId = String.format("anon-player-%s", UUID.randomUUID().toString());
             response.addCookie(new Cookie("playerId", playerId));
         }
         return new ModelAndView("index");
+    }
+
+    @RequestMapping(value = "/ackEndGame/{gameId}/{playerId}", method = RequestMethod.POST)
+    public void ackEndGame(@PathVariable String gameId, @PathVariable String playerId) throws IOException {
+        System.out.println("coucou redirect");
+        ackEndGameUsecase.ackEndGame(gameId, playerId);
     }
 
     @PostMapping("createGame/{playerId}")
