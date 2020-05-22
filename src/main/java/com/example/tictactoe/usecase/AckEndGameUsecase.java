@@ -11,12 +11,17 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-@AllArgsConstructor
 public class AckEndGameUsecase {
     private final ListGamesSocketHandler listGamesSocketHandler;
     private final GameRepository gameRepository;
     private final GameEndingRepository gameEndingRepository;
     private String gameNotFoundErrorMessage;
+
+    public AckEndGameUsecase(ListGamesSocketHandler listGamesSocketHandler, GameRepository gameRepository, GameEndingRepository gameEndingRepository) {
+        this.listGamesSocketHandler = listGamesSocketHandler;
+        this.gameRepository = gameRepository;
+        this.gameEndingRepository = gameEndingRepository;
+    }
 
     public void ackEndGame(String gameId, String playerId) throws IOException {
         gameNotFoundErrorMessage = String.format("%s game does not exist", gameId);

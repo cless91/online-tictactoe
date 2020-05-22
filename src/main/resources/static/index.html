@@ -49,6 +49,10 @@
     socket.onopen = function (event) {
     };
 
+    function deleteGame(game) {
+        document.getElementById(game.id).remove();
+    }
+
     socket.onmessage = function (event) {
         var data = JSON.parse(event.data);
         var opCode = data['opCode'];
@@ -64,6 +68,9 @@
         } else if (opCode == 'gameUpdated') {
             var game = data['game'];
             updateGame(game);
+        } else if (opCode == 'gameDeleted') {
+            var game = data['game'];
+            deleteGame(game);
         }
     };
 
