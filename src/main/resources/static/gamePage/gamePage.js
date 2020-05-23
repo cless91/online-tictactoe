@@ -45,6 +45,7 @@ function redrawGrid() {
         var mark;
         for (let i = 0; i < 9; i++) {
             mark = gameData.grid[i];
+            mark = mark === "NONE" ? "" : mark;
             document.getElementsByClassName("box")[i].innerHTML = mark;
         }
     }
