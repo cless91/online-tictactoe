@@ -9,28 +9,31 @@ socket.binaryType = "arraybuffer";
 const startGameElem = document.getElementById("startGame");
 const ongoingGameState = document.getElementById("ongoingGameState");
 const playerAssignmentElem = document.getElementById("playerAssignment");
+const resultPopupElem = $('#resultPopup');
+
 const currentPlayerElem = document.getElementById("currentPlayer");
 
 const endGameStates = ["X_WINS", "O_WINS", "DRAW"]
-
-socket.onopen = function (event) {
-};
-
 socket.onmessage = function (event) {
     var data = JSON.parse(event.data);
-    var opCode = data['opCode'];
 
+    var opCode = data['opCode'];
     if (opCode === 'gameUpdated') {
         gameData = data.game;
         updateGameDisplayFromGameData();
     }
-};
 
+};
 $.post("http://localhost:8080/gameData/" + gameId, function (data) {
     gameData = data;
     updateGameDisplayFromGameData();
 }).fail(function () {
     alert("error getting game information data");
+
+});
+
+resultPopupElem.on('hidden.bs.modal', function (e) {
+    ackEndGameThenGamesList();
 });
 
 function startGame(gameId) {
@@ -63,7 +66,7 @@ function displayGameOverAndRedirect() {
     } else {
         $('#result').text("sorry, you lost ! Maybe next time ...");
     }
-    $('#resultPopup').modal('show')
+    resultPopupElem.modal('show')
 }
 
 function updateGameDisplayFromGameData() {
