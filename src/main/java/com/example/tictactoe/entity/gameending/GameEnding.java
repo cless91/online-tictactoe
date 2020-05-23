@@ -2,6 +2,8 @@ package com.example.tictactoe.entity.gameending;
 
 import com.example.tictactoe.entity.Game;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public class GameEnding {
@@ -32,6 +34,13 @@ public class GameEnding {
         }else {
             otherPlayerAck = true;
         }
+    }
+
+    public List<String> getAcksPlayerIds(){
+        List<String> acksPlayerIds = new ArrayList<>();
+        if(creatorAck) acksPlayerIds.add(creatorId);
+        if(otherPlayerAck) acksPlayerIds.add(otherPlayerId);
+        return acksPlayerIds;
     }
 
     public boolean allPlayersHaveAck(){

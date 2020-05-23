@@ -46,7 +46,6 @@ public class GameRestController {
 
     @RequestMapping(value = "/ackEndGame/{gameId}/{playerId}", method = RequestMethod.POST)
     public void ackEndGame(@PathVariable String gameId, @PathVariable String playerId) throws IOException {
-        System.out.println("coucou redirect");
         ackEndGameUsecase.ackEndGame(gameId, playerId);
     }
 

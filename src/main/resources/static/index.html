@@ -53,6 +53,10 @@
         document.getElementById(game.id).remove();
     }
 
+    function playerHasNotAckGame(playerAcks) {
+        return playerAcks.indexOf(playerId) < 0;
+    }
+
     socket.onmessage = function (event) {
         var data = JSON.parse(event.data);
         var opCode = data['opCode'];
@@ -60,7 +64,10 @@
         if (opCode == 'mainPage') {
             var currentGames = data['currentGames'];
             currentGames.forEach(function (game) {
-                addToCurrentGames(game);
+                let playerAcks = game.playerAcks;
+                if(playerHasNotAckGame(playerAcks)){
+                    addToCurrentGames(game);
+                }
             });
         } else if (opCode == 'gameCreated') {
             var newGame = data['newGame'];
@@ -86,15 +93,24 @@
     function updateGame(game) {
         var gameDom = document.getElementById(game.id);
         gameDom.outerHTML = gameToHtml(game)
-        console.log("coucou")
     }
 
     function addToCurrentGames(game) {
         currentGames.innerHTML += gameToHtml(game)
     }
 
+    function getSingleGameActionButton(game) {
+        if(game.creator === playerId || game.otherPlayer === playerId){
+            return '<a href="/gamePage/gamePage.html?gameId=' + game.id +'" style="float: right" role="button" class="btn btn-secondary btn-sm">go&nbsp;back</a>'
+        } else if (game.isJoinable) {
+            return '<button onclick="joinGame(\'' + game.id + '\')" style="float: right" type="button" class="btn btn-primary btn-sm" style="white-space: normal;">join</button>';
+        } else {
+             return '';
+        }
+    }
+
     function gameToHtml(game) {
-        return `<tr id="${game.id}"> <td>${game.title}</th> <td>${game.creator}</td> <td>${game.nbOfPlayers}</td> <td>${game.isJoinable ? '<button onclick="joinGame(\'' + game.id + '\')" style="float: right" type="button" class="btn btn-primary btn-sm">join</button>' : ''}</td> </tr>`;
+        return `<tr id="${game.id}"> <td>${game.title}</th> <td>${game.creator}</td> <td>${game.nbOfPlayers}</td> <td>${getSingleGameActionButton(game)}</td> </tr>`;
     }
 
 </script>

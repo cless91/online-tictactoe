@@ -2,7 +2,7 @@ package com.example.tictactoe.infra;
 
 import com.example.tictactoe.entity.*;
 import com.example.tictactoe.presentation.GamePresentation;
-import com.example.tictactoe.usecase.JoinGameUsecase;
+import com.example.tictactoe.presentation.GamePresentationFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -23,12 +23,13 @@ public class ListGamesSocketHandler extends AbstractWebSocketHandler {
     static List<WebSocketSession> ListGamesSessions = new ArrayList<>();
     private final GameRepository gameRepository;
     private final ObjectMapper objectMapper;
+    private final GamePresentationFactory gamePresentationFactory;
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
         ListGamesSessions.add(session);
         List<GamePresentation> gamePresentations = gameRepository.listGames().stream()
-                .map(GamePresentation::fromGame)
+                .map(gamePresentationFactory::fromGame)
                 .collect(Collectors.toList());
         Map<String,Object> data = new HashMap<>();
         data.put("opCode","mainPage");
@@ -72,6 +73,6 @@ public class ListGamesSocketHandler extends AbstractWebSocketHandler {
 
     public Optional<GamePresentation> getGameData(String gameId){
         return gameRepository.getGameById(gameId)
-                .map(GamePresentation::fromGame);
+                .map(gamePresentationFactory::fromGame);
     }
 }

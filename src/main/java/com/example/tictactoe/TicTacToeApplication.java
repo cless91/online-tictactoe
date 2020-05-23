@@ -4,6 +4,7 @@ import com.example.tictactoe.entity.GameFactory;
 import com.example.tictactoe.entity.GameRepository;
 import com.example.tictactoe.infra.GameEndingRepositoryInMemory;
 import com.example.tictactoe.infra.SingleGameSocketHandler;
+import com.example.tictactoe.presentation.GamePresentationFactory;
 import com.example.tictactoe.usecase.*;
 import com.example.tictactoe.infra.InMemoryGameRepository;
 import com.example.tictactoe.infra.ListGamesSocketHandler;
@@ -31,31 +32,31 @@ public class TicTacToeApplication {
     }
 
     @Bean
-    public CreateGameUsecase createGameUsecase(GameFactory gameFactory, ListGamesSocketHandler socketHandler) {
-        return new CreateGameUsecase(gameFactory, socketHandler);
+    public CreateGameUsecase createGameUsecase(GameFactory gameFactory, ListGamesSocketHandler socketHandler,GamePresentationFactory gamePresentationFactory) {
+        return new CreateGameUsecase(gameFactory, socketHandler, gamePresentationFactory);
     }
 
     @Bean
     public JoinGameUsecase joinGameUsecase(GameRepository gameRepository,
                                            ListGamesSocketHandler listGamesSocketHandler,
-                                           SingleGameSocketHandler singleGameSocketHandler) {
+                                           SingleGameSocketHandler singleGameSocketHandler,GamePresentationFactory gamePresentationFactory) {
         return new JoinGameUsecase(gameRepository,
                 listGamesSocketHandler,
-                singleGameSocketHandler);
+                singleGameSocketHandler, gamePresentationFactory);
     }
 
     @Bean
-    public StartGameUsecase startGameUsecase(GameRepository gameRepository, SingleGameSocketHandler singleGameSocketHandler) {
-        return new StartGameUsecase(gameRepository, singleGameSocketHandler);
+    public StartGameUsecase startGameUsecase(GameRepository gameRepository, SingleGameSocketHandler singleGameSocketHandler,GamePresentationFactory gamePresentationFactory) {
+        return new StartGameUsecase(gameRepository, singleGameSocketHandler, gamePresentationFactory);
     }
 
     @Bean
-    public PlayUsecase playUsecase(GameRepository gameRepository, SingleGameSocketHandler singleGameSocketHandler) {
-        return new PlayUsecase(gameRepository, singleGameSocketHandler);
+    public PlayUsecase playUsecase(GameRepository gameRepository, SingleGameSocketHandler singleGameSocketHandler,GamePresentationFactory gamePresentationFactory) {
+        return new PlayUsecase(gameRepository, singleGameSocketHandler, gamePresentationFactory);
     }
 
     @Bean
-    public GameEndingRepository gameEndingRepository(){
+    public GameEndingRepository gameEndingRepository() {
         return new GameEndingRepositoryInMemory();
     }
 
@@ -64,6 +65,11 @@ public class TicTacToeApplication {
                                                GameRepository gameRepository,
                                                GameEndingRepository gameEndingRepository) {
         return new AckEndGameUsecase(listGamesSocketHandler, gameRepository, gameEndingRepository);
+    }
+
+    @Bean
+    public GamePresentationFactory gamePresentationFactory(GameEndingRepository gameEndingRepository) {
+        return new GamePresentationFactory(gameEndingRepository);
     }
 
 }
