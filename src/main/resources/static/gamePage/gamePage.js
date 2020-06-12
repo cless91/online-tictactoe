@@ -3,7 +3,7 @@ var gameData;
 const gameId = new URLSearchParams(window.location.search).get('gameId');
 var playerId = Cookies.get('playerId');
 
-const socket = new WebSocket("ws://pacific-caverns-29164.herokuapp.com:8080/singleGame?gameId=" + gameId);
+const socket = new WebSocket("ws://pacific-caverns-29164.herokuapp.com/singleGame?gameId=" + gameId);
 socket.binaryType = "arraybuffer";
 
 const startGameElem = document.getElementById("startGame");

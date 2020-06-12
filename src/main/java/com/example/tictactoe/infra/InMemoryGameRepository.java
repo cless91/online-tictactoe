@@ -18,8 +18,6 @@ public class InMemoryGameRepository implements GameRepository {
         return games;
     }
 
-
-
     @Override
     public Optional<Game> getGameById(String gameId) {
         return games.stream()
