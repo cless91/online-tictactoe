@@ -31,9 +31,9 @@ public class ListGamesSocketHandler extends AbstractWebSocketHandler {
         List<GamePresentation> gamePresentations = gameRepository.listGames().stream()
                 .map(gamePresentationFactory::fromGame)
                 .collect(Collectors.toList());
-        Map<String,Object> data = new HashMap<>();
-        data.put("opCode","mainPage");
-        data.put("currentGames",gamePresentations);
+        Map<String, Object> data = new HashMap<>();
+        data.put("opCode", "mainPage");
+        data.put("currentGames", gamePresentations);
         session.sendMessage(new TextMessage(objectMapper.writeValueAsString(data)));
         super.afterConnectionEstablished(session);
     }
@@ -71,8 +71,14 @@ public class ListGamesSocketHandler extends AbstractWebSocketHandler {
         }
     }
 
-    public Optional<GamePresentation> getGameData(String gameId){
+    public Optional<GamePresentation> getGameData(String gameId) {
         return gameRepository.getGameById(gameId)
                 .map(gamePresentationFactory::fromGame);
+    }
+
+    public List<GamePresentation> listGames() {
+        return gameRepository.listGames().stream()
+                .map(gamePresentationFactory::fromGame)
+                .collect(Collectors.toList());
     }
 }

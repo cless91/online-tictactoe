@@ -24,7 +24,7 @@ socket.onmessage = function (event) {
     }
 
 };
-$.post("http://pacific-caverns-29164.herokuapp.com:8080/gameData/" + gameId, function (data) {
+$.get("http://pacific-caverns-29164.herokuapp.com:8080/gameData/" + gameId, function (data) {
     gameData = data;
     updateGameDisplayFromGameData();
 }).fail(function () {

@@ -1,16 +1,28 @@
 package com.example.tictactoe.infra;
 
 import com.example.tictactoe.presentation.GamePresentation;
-import com.example.tictactoe.usecase.*;
+import com.example.tictactoe.usecase.AckEndGameUsecase;
+import com.example.tictactoe.usecase.CreateGameUsecase;
+import com.example.tictactoe.usecase.JoinGameUsecase;
+import com.example.tictactoe.usecase.PlayUsecase;
+import com.example.tictactoe.usecase.StartGameUsecase;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CookieValue;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.view.RedirectView;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.List;
 import java.util.UUID;
 
 @CrossOrigin(origins = "*")
@@ -60,12 +72,17 @@ public class GameRestController {
         joinGameUsecase.joinGame(gameId, playerId);
     }
 
-    @PostMapping("gameData/{gameId}")
+    @GetMapping("gameData/{gameId}")
     public GamePresentation getGameData(@PathVariable String gameId) throws IOException {
         GamePresentation gamePresentation = listGamesSocketHandler.getGameData(gameId).orElseThrow(
                 () -> new GameNotFoundException(String.format("game not found : %s", gameId))
         );
         return gamePresentation;
+    }
+
+    @GetMapping("listGames")
+    public List<GamePresentation> getGameDatas() throws IOException {
+        return listGamesSocketHandler.listGames();
     }
 
     @PostMapping("startGame/{gameId}")
