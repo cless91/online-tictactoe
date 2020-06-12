@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.UUID;
 
+@CrossOrigin(origins = "*")
 @RestController
 public class GameRestController {
 
