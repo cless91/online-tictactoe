@@ -34,11 +34,11 @@
     const currentGames = document.getElementById("currentGames");
     const createGame = document.getElementById("createGame");
 
-    const socket = new WebSocket("ws://pacific-caverns-29164.herokuapp.com:8080/socket");
+    const socket = new WebSocket("ws://pacific-caverns-29164.herokuapp.com/socket");
     socket.binaryType = "arraybuffer";
 
     createGame.onclick = function (event) {
-        $.post("http://pacific-caverns-29164.herokuapp.com:8080/createGame/" + playerId, function (gameData) {
+        $.post("http://pacific-caverns-29164.herokuapp.com/createGame/" + playerId, function (gameData) {
             window.location.href = '/gamePage/gamePage.html?gameId=' + gameData.id;
         })
         .fail(function () {
@@ -82,7 +82,7 @@
     };
 
     function joinGame(gameId) {
-        $.post("http://pacific-caverns-29164.herokuapp.com:8080/joinGame/" + gameId + "/" + playerId, function () {
+        $.post("http://pacific-caverns-29164.herokuapp.com/joinGame/" + gameId + "/" + playerId, function () {
             window.location.href = '/gamePage/gamePage.html?gameId=' + gameId;
         })
         .fail(function () {

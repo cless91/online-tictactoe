@@ -24,7 +24,7 @@ socket.onmessage = function (event) {
     }
 
 };
-$.get("http://pacific-caverns-29164.herokuapp.com:8080/gameData/" + gameId, function (data) {
+$.get("http://pacific-caverns-29164.herokuapp.com/gameData/" + gameId, function (data) {
     gameData = data;
     updateGameDisplayFromGameData();
 }).fail(function () {
@@ -37,7 +37,7 @@ resultPopupElem.on('hidden.bs.modal', function (e) {
 });
 
 function startGame(gameId) {
-    $.post("http://pacific-caverns-29164.herokuapp.com:8080/startGame/" + gameId)
+    $.post("http://pacific-caverns-29164.herokuapp.com/startGame/" + gameId)
         .fail(function () {
             alert("error starting game" + gameId);
         });
@@ -108,7 +108,7 @@ function getAssignment(playerId) {
 
 function play(x, y) {
     if (gameData.currentPlayer === playerId) {
-        $.post("http://pacific-caverns-29164.herokuapp.com:8080/play/" + gameId + "/" + playerId + "?x=" + x + "&y=" + y)
+        $.post("http://pacific-caverns-29164.herokuapp.com/play/" + gameId + "/" + playerId + "?x=" + x + "&y=" + y)
             .fail(function () {
                 alert("error playing game" + gameId);
             });
@@ -118,7 +118,7 @@ function play(x, y) {
 }
 
 function ackEndGameThenGamesList() {
-    $.post("http://pacific-caverns-29164.herokuapp.com:8080/ackEndGame/" + gameId + "/" + playerId, function () {
+    $.post("http://pacific-caverns-29164.herokuapp.com/ackEndGame/" + gameId + "/" + playerId, function () {
         window.location.href = '/';
     })
         .fail(function () {
@@ -127,7 +127,7 @@ function ackEndGameThenGamesList() {
 }
 
 function ackEndGameThenMainMenu() {
-    $.post("http://pacific-caverns-29164.herokuapp.com:8080/ackEndGame/" + gameId + "/" + playerId, function () {
+    $.post("http://pacific-caverns-29164.herokuapp.com/ackEndGame/" + gameId + "/" + playerId, function () {
         window.location.href = '/mainMenu/mainMenu.html';
     })
         .fail(function () {
